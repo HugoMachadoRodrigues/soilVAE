@@ -1,0 +1,88 @@
+---
+output: github_document
+---
+
+{r}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+
+soilVAE
+
+soilVAE is an R package to build, tune, and use a supervised Variational Autoencoder (VAE) regression model for soil spectroscopy (and other high-dimensional predictors).
+The core model is implemented in Python (Keras 3 / TensorFlow) and is accessed from R via {reticulate}.
+
+Installation
+1) Install the R package
+
+{r}
+# from GitHub (recommended once your repo is public)
+# install.packages("remotes")
+# remotes::install_github("YOUR_GITHUB/soilVAE")
+
+# local install (from the package folder)
+# install.packages("devtools")
+# devtools::install(".")
+
+2) Create a Python environment with the required dependencies
+
+You need a Python environment with:
+
+- numpy
+- tensorflow
+- keras (Keras 3)
+
+Example using reticulate virtualenv:
+
+library(reticulate)
+
+# create a virtualenv (only once)
+virtualenv_create("r-tf311")
+
+# install python deps into that env (only once)
+py_install(c("numpy", "tensorflow", "keras"), envname = "r-tf311", pip = TRUE)
+
+# point reticulate to the env
+reticulate::use_virtualenv("r-tf311", required = TRUE)
+reticulate::py_config()
+
+Notes:
+
+On macOS, TensorFlow installation depends on your architecture (Intel vs Apple Silicon).
+
+If you already have a working env, just point reticulate to it.
+
+library(soilVAE)
+
+# Point reticulate to your Python env
+vae_configure(venv = "r-tf311")  # or vae_configure(python = "/path/to/python")
+
+1) Prepare data
+
+soilVAE expects numeric matrices with aligned columns:
+
+X_tr, X_va, X_te: numeric matrices (n x p), same feature columns and order
+
+y_tr, y_va, y_te: numeric vectors
+
+Scaling is user-controlled. A common approach is to center/scale using train stats.
+
+library(tidyr)
+
+2) Define a tuning grid
+grid_vae <- tidyr::crossing(
+  hidden_enc = list(c(512,256), c(256,128)),
+  hidden_dec = list(c(256,512), c(128,256)),
+  latent_dim = c(16, 32),
+  dropout    = c(0.0, 0.1),
+  lr         = c(5e-4, 1e-3),
+  beta_kl    = c(0.5, 1.0),
+  alpha_y    = c(1.0, 2.0),
+  epochs     = 80,
+  batch_size = 64,
+  patience   = 10
+)
+
+

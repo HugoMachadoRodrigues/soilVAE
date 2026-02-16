@@ -1,0 +1,234 @@
+---
+title: "soilVAE Workflow"
+author: "Hugo Rodrigues"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{soilVAE Workflow}
+  %\VignetteEngine{rmarkdown::html_vignette}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+# Overview
+
+soilVAE provides a supervised Variational Autoencoder (VAE) regression model implemented in Python (Keras 3 / TensorFlow) and accessed from R via {reticulate}.
+
+The workflow consists of:
+
+1.  Configure Python environment
+
+2.  Build model
+
+3.  Tune hyperparameters
+
+4.  Select best configuration
+
+5.  Refit on Train+Validation
+
+6.  Predict and extract embeddings
+
+# 1. Configure Python Environment
+
+The package assumes a working Python environment with:
+
+-   numpy
+
+-   tensorflow
+
+-   keras
+
+Example:
+
+```{r}
+library(soilVAE)
+
+# Configure virtual environment
+vae_configure(venv = "r-tf311")
+```
+
+You can verify Python:
+
+```{r}
+reticulate::py_config()
+```
+
+# 2. Prepare Data
+
+The model expects numeric matrices:
+
+-   `X_tr`, `X_va`, `X_te`
+
+-    `y_tr`, `y_va`, `y_te` E
+
+Example structure:
+
+```{r}
+str(X_tr)
+str(y_tr)
+```
+
+Scaling should be done **outside** the package (recommended: center_scale).
+
+# 3. Define Hyperparameter Grid
+
+Example grid:
+
+```{r}
+grid_vae <- expand.grid(
+  latent_dim = c(16, 32),
+  dropout    = c(0.0, 0.1),
+  lr         = c(5e-4, 1e-3),
+  beta_kl    = c(0.5, 1.0),
+  alpha_y    = c(1.0, 2.0),
+  epochs     = 80,
+  batch_size = 64,
+  patience   = 10
+)
+
+# Hidden layers must be list-columns
+grid_vae$hidden_enc <- list(c(512, 256))
+grid_vae$hidden_dec <- list(c(256, 512))
+```
+
+# 4. Tune on Validation Set
+
+```{r}
+tuned <- tune_vae_train_val(
+  X_tr = X_tr,
+  y_tr = y_tr,
+  X_va = X_va,
+  y_va = y_va,
+  seed = 123,
+  grid_vae = grid_vae
+)
+
+head(tuned$tuning_df)
+```
+
+The output contains validation metrics:
+
+-    RMSE_val
+
+-    R2_val
+
+-    RPIQ_val
+
+# 5. Select Best Configuration
+
+```{r}
+sel <- select_best_from_grid(
+  tuned$tuning_df,
+  selection_metric = "euclid"
+)
+
+best <- sel$best
+best
+```
+
+Available selection metrics:
+
+-   `"euclid"`
+
+-   `"rmse"`
+
+-    `"r2"`
+
+-   `"rpiq"`
+
+# 6. Refit on Train + Validation
+
+```{r}
+X_trva <- rbind(X_tr, X_va)
+y_trva <- c(y_tr, y_va)
+
+best_cfg <- tuned$grid[best$cfg_id, , drop = FALSE]
+
+m <- vae_build(
+  input_dim  = ncol(X_trva),
+  hidden_enc = best_cfg$hidden_enc[[1]],
+  hidden_dec = best_cfg$hidden_dec[[1]],
+  latent_dim = best_cfg$latent_dim,
+  dropout    = best_cfg$dropout,
+  lr         = best_cfg$lr,
+  beta_kl    = best_cfg$beta_kl,
+  alpha_y    = best_cfg$alpha_y
+)
+
+vae_fit(
+  model = m,
+  X = X_trva,
+  y = y_trva,
+  epochs = best_cfg$epochs,
+  batch_size = best_cfg$batch_size
+)
+```
+
+# 7. Predict and Extract Latent Embeddings
+
+```{r}
+yhat_te <- vae_predict(m, X_te)
+Z_te    <- vae_encode(m, X_te)
+
+dim(Z_te)
+```
+
+The latent matrix (`Z_te`) can be used for:
+
+-    Downstream ML models
+
+-    Feature extraction
+
+-   Spatial modeling
+
+-   Domain adaptation
+
+# Model Objective
+
+The supervised VAE minimizes:
+
+$ Total Loss=Reconstruction Loss+β⋅KL Divergence+α⋅Regression Loss $
+
+Where:
+
+-    **β** controls latent regularization
+
+-    **α** controls regression strength
+
+# Design Philosophy
+
+`soilVAE` intentionally focuses only on:
+
+-    Model definition
+
+-    Training
+
+-    Hyperparameter tuning
+
+-    Latent extraction
+
+Data ingestion, preprocessing, and splitting are external by design.
+
+# Reproducibility Notes
+
+For stable experiments:
+
+-    Fix seed
+
+-   Use explicit scaling
+
+-    Record best configuration
+
+-    Store tuning results
+
+# Author
+
+Hugo Rodrigues\
+Digital Soil Mapping & Deep Learning Research

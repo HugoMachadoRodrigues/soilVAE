@@ -1,0 +1,16 @@
+citHeader("To cite soilVAE in publications, please use:")
+
+citEntry(
+  entry    = "Manual",
+  title    = "soilVAE: Supervised Variational Autoencoder Regression for Soil Spectroscopy",
+  author   = personList(
+    person(given = "Hugo", family = "Rodrigues")
+  ),
+  year     = "2026",
+  note     = "R package version 0.1.0",
+  textVersion =
+    paste(
+      "Rodrigues, H. (2026). soilVAE: Supervised Variational Autoencoder Regression for Soil Spectroscopy.",
+      "R package version 0.1.0."
+    )
+)

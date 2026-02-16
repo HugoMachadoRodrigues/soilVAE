@@ -1,0 +1,26 @@
+url: https://<SEU_USUARIO>.github.io/soilVAE/
+
+template:
+  bootstrap: 5
+
+home:
+  title: soilVAE
+  description: Supervised VAE regression (Keras/TensorFlow via reticulate) for soil spectroscopy and high-dimensional predictors.
+
+reference:
+  - title: "Core API"
+    contents:
+      - vae_configure
+      - vae_build
+      - vae_fit
+      - vae_predict
+      - vae_encode
+  - title: "Tuning"
+    contents:
+      - tune_vae_train_val
+      - select_best_from_grid
+
+articles:
+  - title: "Workflows"
+    contents:
+      - soilVAE-workflow
