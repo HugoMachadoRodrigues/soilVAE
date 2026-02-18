@@ -1,9 +1,3 @@
----
-output: github_document
-editor_options: 
-  markdown: 
-    wrap: 72
----
 
 <!-- README.Rmd is generated to README.md for GitHub. Edit README.Rmd, then run: rmarkdown::render("README.Rmd") -->
 
@@ -36,10 +30,10 @@ the *why*, *how*, and *performance* without opening additional files.
 Given spectra $x\in\mathbb{R}^p$ and a continuous soil property
 $y\in\mathbb{R}$, soilVAE learns:
 
--   an encoder $q_\phi(z\mid x)$ mapping spectra to a latent embedding
-    $z\in\mathbb{R}^d$
--   a decoder $p_\theta(x\mid z)$ reconstructing spectra
--   a supervised head $\hat y = f_\psi(z)$ predicting the property
+- an encoder $q_\phi(z\mid x)$ mapping spectra to a latent embedding
+  $z\in\mathbb{R}^d$
+- a decoder $p_\theta(x\mid z)$ reconstructing spectra
+- a supervised head $\hat y = f_\psi(z)$ predicting the property
 
 ### Objective (supervised $\beta$-VAE)
 
@@ -80,9 +74,9 @@ remotes::install_github("HugoMachadoRodrigues/soilVAE")
 Because deep learning depends on external Python libraries, this README
 uses a **defensive pattern**:
 
-1)  detect whether Python + TF/Keras are available\
+1)  detect whether Python + TF/Keras are available  
 2)  if not, show *exactly* how to create a conda env using **conda-forge
-    only**\
+    only**  
 3)  run the VAE only when the environment is ready
 
 > **Important**: `reticulate` “locks” the Python used **per R session**.
@@ -133,7 +127,7 @@ a **PLS baseline** and **soilVAE**.
 
 ### Packages
 
-```{r setup, message=FALSE}
+``` r
 set.seed(19101991)
 
 pkgs <- c("prospectr", "pls", "reticulate")
@@ -161,36 +155,52 @@ if (has_py) {
 This example assumes you ship `datsoilspc` inside the package
 (`data/datsoilspc.rda`).
 
-```{r data}
+``` r
 data("datsoilspc", package = "soilVAE")
 str(datsoilspc)
 ```
 
+    ## 'data.frame':    391 obs. of  5 variables:
+    ##  $ clay       : num  49 7 56 14 53 24 9 18 33 27 ...
+    ##  $ silt       : num  10 24 17 19 7 21 9 20 13 19 ...
+    ##  $ sand       : num  42 69 27 67 40 55 83 61 54 55 ...
+    ##  $ TotalCarbon: num  0.15 0.12 0.17 1.06 0.69 2.76 0.66 1.36 0.19 0.16 ...
+    ##  $ spc        : num [1:391, 1:2151] 0.0898 0.1677 0.0778 0.0958 0.0359 ...
+    ##   ..- attr(*, "dimnames")=List of 2
+    ##   .. ..$ : NULL
+    ##   .. ..$ : chr [1:2151] "350" "351" "352" "353" ...
+    ##  - attr(*, "na.action")= 'omit' Named int 392
+    ##   ..- attr(*, "names")= chr "63"
+
 Expected structure:
 
--   `datsoilspc$spc`: matrix of reflectance spectra (rows = samples;
-    cols = wavelengths)
--   `datsoilspc$TotalCarbon`: numeric target (example property)
+- `datsoilspc$spc`: matrix of reflectance spectra (rows = samples; cols
+  = wavelengths)
+- `datsoilspc$TotalCarbon`: numeric target (example property)
 
 ### Visualize reflectance and absorbance
 
-```{r plots-reflectance, fig.width=7, fig.height=4}
+``` r
 wavs_ref <- as.numeric(colnames(datsoilspc$spc))
 matplot(x = wavs_ref, y = t(datsoilspc$spc),
         xlab = "Wavelength (nm)", ylab = "Reflectance",
         type = "l", lty = 1, col = rgb(0.5,0.5,0.5,0.25))
 ```
 
-```{r plots-absorbance, fig.width=7, fig.height=4}
+![](README_files/figure-gfm/plots-reflectance-1.png)<!-- -->
+
+``` r
 spcA <- log(1 / datsoilspc$spc)
 matplot(x = wavs_ref, y = t(spcA),
         xlab = "Wavelength (nm)", ylab = "Absorbance",
         type = "l", lty = 1, col = rgb(0.5,0.5,0.5,0.25))
 ```
 
+![](README_files/figure-gfm/plots-absorbance-1.png)<!-- -->
+
 ### Pre-processing (resampling → SNV → moving average)
 
-```{r preprocessing}
+``` r
 oldWavs <- as.numeric(colnames(datsoilspc$spc))
 newWavs <- seq(min(oldWavs), max(oldWavs), by = 5)
 
@@ -204,9 +214,11 @@ matplot(x = wavs, y = t(spcAMovav),
         type = "l", lty = 1, col = rgb(0.5,0.5,0.5,0.25))
 ```
 
+![](README_files/figure-gfm/preprocessing-1.png)<!-- -->
+
 ### Split (calibration/validation)
 
-```{r split}
+``` r
 y <- datsoilspc$TotalCarbon
 
 calId <- sample(seq_len(nrow(spcAMovav)), size = round(0.75 * nrow(spcAMovav)))
@@ -219,6 +231,11 @@ y_val <- y[-calId]
 par(mfrow = c(1,2))
 hist(y_cal, main = "Calibration", xlab = "Total carbon")
 hist(y_val, main = "Validation", xlab = "Total carbon")
+```
+
+![](README_files/figure-gfm/split-1.png)<!-- -->
+
+``` r
 par(mfrow = c(1,1))
 ```
 
@@ -226,7 +243,7 @@ par(mfrow = c(1,1))
 
 ## Baseline: PLS regression
 
-```{r pls}
+``` r
 maxc <- 30
 pls_fit <- plsr(y_cal ~ X_cal, method = "oscorespls", ncomp = maxc, validation = "CV")
 
@@ -237,12 +254,17 @@ pls_pred_cal <- drop(predict(pls_fit, ncomp = nc, newdata = X_cal))
 pls_pred_val <- drop(predict(pls_fit, ncomp = nc, newdata = X_val))
 ```
 
-```{r pls-plots, fig.width=7, fig.height=3.5}
+``` r
 par(mfrow = c(1,2))
 plot(y_cal, pls_pred_cal, xlab = "Observed", ylab = "Predicted", main = "PLS (calibration)", pch = 16)
 abline(0, 1)
 plot(y_val, pls_pred_val, xlab = "Observed", ylab = "Predicted", main = "PLS (validation)", pch = 16)
 abline(0, 1)
+```
+
+![](README_files/figure-gfm/pls-plots-1.png)<!-- -->
+
+``` r
 par(mfrow = c(1,1))
 ```
 
@@ -252,9 +274,12 @@ par(mfrow = c(1,1))
 
 ### 1) Detect Python + TF/Keras
 
-```{r tf-detect}
+``` r
 c(has_py = has_py, has_tf = has_tf)
 ```
+
+    ## has_py has_tf 
+    ##  FALSE  FALSE
 
 If `has_tf` is `FALSE`, you can still run the **PLS baseline** above and
 render this README without errors. To enable the VAE sections locally,
@@ -263,7 +288,7 @@ restart R, and re-render.
 
 ### 2) Configure env (only if available)
 
-```{r tf-config, eval=has_tf}
+``` r
 # If has_tf is FALSE:
 # 1) create env as described above
 # 2) restart R
@@ -274,8 +299,7 @@ reticulate::py_config()
 
 ### 3) Train a *small but strong* VAE (fast preset)
 
-```{r vae-train, eval=has_tf}
-
+``` r
 # Standardize y then back-transform (often improves stability/metrics)
 y_mu <- mean(y_cal); y_sd <- sd(y_cal)
 y_cal_s <- (y_cal - y_mu) / y_sd
@@ -309,7 +333,7 @@ vae_pred_cal <- vae_pred_cal_s * y_sd + y_mu
 vae_pred_val <- vae_pred_val_s * y_sd + y_mu
 ```
 
-```{r vae-plots, fig.width=7, fig.height=3.5, eval=has_tf}
+``` r
 par(mfrow = c(1,2))
 plot(y_cal, vae_pred_cal, xlab = "Observed", ylab = "Predicted", main = "soilVAE (calibration)", pch = 16)
 abline(0, 1)
@@ -322,7 +346,7 @@ par(mfrow = c(1,1))
 
 ## Metrics (ME, MAE, RMSE, R², RPIQ, RPD)
 
-```{r metrics}
+``` r
 eval_quant <- function(obs, pred) {
   ok <- is.finite(obs) & is.finite(pred)
   obs <- obs[ok]; pred <- pred[ok]
@@ -364,6 +388,10 @@ out[num_cols] <- lapply(out[num_cols], function(x) round(x, 2))
 out
 ```
 
+    ##   Model       Split   n   ME  MAE RMSE   R2 RPIQ  RPD
+    ## 1   PLS Calibration 293 0.00 0.37 0.56 0.86 2.04 2.63
+    ## 2   PLS  Validation  98 0.02 0.36 0.52 0.69 2.34 1.81
+
 ------------------------------------------------------------------------
 
 ## Why not PLS? (strategic)
@@ -391,7 +419,7 @@ soilVAE is not “PLS but fancier”. It is useful when you want
     and reused in classical models, spatial mapping, clustering, anomaly
     detection, and monitoring.
 
-> **PLS** is the baseline for “best linear spectral inference”.\
+> **PLS** is the baseline for “best linear spectral inference”.  
 > **soilVAE** targets “learn a reusable representation of spectra that
 > is predictive of soil properties and transferable across conditions”.
 
@@ -402,9 +430,9 @@ soilVAE is not “PLS but fancier”. It is useful when you want
 In hydropedology at landscape scale, we often need to connect
 measurements to **water‑related soil functions** across space and time:
 
--   infiltrability, storage capacity, retention curve traits
--   management effects (tillage, cover crops, compaction)
--   drought scenario impacts and coupling to agro‑hydrologic models
+- infiltrability, storage capacity, retention curve traits
+- management effects (tillage, cover crops, compaction)
+- drought scenario impacts and coupling to agro‑hydrologic models
 
 Spectral inference supports this by providing high‑throughput proxies of
 soil attributes. **soilVAE** is positioned as a *representation layer*:
