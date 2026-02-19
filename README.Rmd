@@ -1,10 +1,11 @@
 ---
 output: github_document
+bibliography: references.bib
 ---
 
 <!-- badges: start -->
 
-# soilVAE <img src="man/figures/Badge_soilVAE_2.png" alt="soilVAE badge" align="right" width="234"/>
+# soilVAE <img src="man/figures/Badge_soilVAE_2.png" alt="soilVAE badge" align="right" width="287"/>
 
 [![CRAN status](https://www.r-pkg.org/badges/version/soilVAE)](https://CRAN.R-project.org/package=soilVAE) [![R-CMD-check](https://github.com/HugoMachadoRodrigues/soilVAE/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/HugoMachadoRodrigues/soilVAE/actions/workflows/R-CMD-check.yaml) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX) ![Python](https://img.shields.io/badge/Python-%3E%3D3.9-blue) ![TensorFlow](https://img.shields.io/badge/TensorFlow-%3E%3D2.13-orange)
 
@@ -107,7 +108,7 @@ soilVAE::vae_configure(python = "C:/path/to/python.exe")
 
 ## Reproducible case study (spectra → pre-processing → PLS baseline → soilVAE)
 
-This follows the workflow style commonly used in soil spectral inference tutorials (e.g., Wadoux et al., 2021), with a direct comparison between a **PLS baseline** and **soilVAE**.
+This follows the workflow style commonly used in soil spectral inference tutorials (e.g., Wadoux et al., 2021) [@wadoux2021], with a direct comparison between a **PLS baseline** and **soilVAE**.
 
 ### Packages
 
@@ -396,6 +397,7 @@ length(y_va)
 dim(X_te)
 
 ```
+
 Prepare Train/Val internal split within datC (no y transform; scale X only)
 
 We model `TotalCarbon` using the preprocessed spectra matrix `spcAMovav`.
@@ -417,7 +419,6 @@ tf.random.set_seed(19101991)
 
 Sys.setenv(TF_DETERMINISTIC_OPS = "1")
 ```
-
 
 ```{r}
 if (!has_tf) {
@@ -537,3 +538,9 @@ If TensorFlow/Keras was not available, you can still use the PLS section and ins
 
 -   Keras (\>= 3)
 ```
+
+## Notes for life
+
+*Education without ethics is only rhetoric.*
+
+*Power without reflection is violence*
