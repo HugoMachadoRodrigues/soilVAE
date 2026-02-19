@@ -7,7 +7,8 @@
 vae_encode(model, X)
 }
 \arguments{
-\item{model}{A fitted model returned by \\code{vae_build()} and trained with \\code{vae_fit()}.}
+\item{model}{A fitted model returned by \code{vae_build()} and trained with
+\code{vae_fit()}.}
 
 \item{X}{Matrix-like predictors.}
 }

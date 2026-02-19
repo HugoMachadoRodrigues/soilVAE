@@ -1,6 +1,6 @@
 #' Fit a VAEReg model
 #'
-#' @param model A model returned by \\code{vae_build()}.
+#' @param model A model returned by \code{vae_build()}.
 #' @param X Matrix-like predictors.
 #' @param y Numeric response vector.
 #' @param X_val Optional validation predictors.

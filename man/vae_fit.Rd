@@ -17,7 +17,7 @@ vae_fit(
 )
 }
 \arguments{
-\item{model}{A model returned by \\code{vae_build()}.}
+\item{model}{A model returned by \code{vae_build()}.}
 
 \item{X}{Matrix-like predictors.}
 

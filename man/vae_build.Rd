@@ -33,7 +33,7 @@ vae_build(
 \item{alpha_y}{Numeric. Weight for supervised regression head loss.}
 }
 \value{
-A Python Keras model object (class \\code{VAEReg}).
+A Python Keras model object (class \code{VAEReg}).
 }
 \description{
 Build a supervised VAE regression model (VAEReg)

@@ -5,6 +5,7 @@ vignette: >
   %\VignetteIndexEntry{soilVAE workflow}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+bibliography: references.bib
 ---
 
 ```{r setup, include=FALSE}

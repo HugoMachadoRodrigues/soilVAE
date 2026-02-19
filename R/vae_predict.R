@@ -1,6 +1,7 @@
 #' Predict using a fitted VAEReg model
 #'
-#' @param model A fitted model returned by \\code{vae_build()} and trained with \\code{vae_fit()}.
+#' @param model A fitted model returned by `vae_build()` and trained with
+#'   `vae_fit()`.
 #' @param X Matrix-like predictors.
 #' @return Numeric vector of predictions.
 #' @export
@@ -13,7 +14,8 @@ vae_predict <- function(model, X) {
 
 #' Extract latent embeddings (z) from a fitted VAEReg model
 #'
-#' @param model A fitted model returned by \\code{vae_build()} and trained with \\code{vae_fit()}.
+#' @param model A fitted model returned by `vae_build()` and trained with
+#'   `vae_fit()`.
 #' @param X Matrix-like predictors.
 #' @return A numeric matrix of embeddings.
 #' @export

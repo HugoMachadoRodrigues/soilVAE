@@ -1,21 +1,13 @@
-#' Tune a supervised VAE on a fixed train/validation split
+#' Tune VAEReg on a train/validation split
 #'
-#' Fits the VAE under one or more hyperparameter configurations on a **given**
-#' train/validation split and returns a tidy results table.
-#'
-#' @param X_tr Numeric matrix. Training predictors.
-#' @param y_tr Numeric vector. Training target.
-#' @param X_va Numeric matrix. Validation predictors.
-#' @param y_va Numeric vector. Validation target.
+#' @param X_tr Train predictors matrix.
+#' @param y_tr Train response numeric.
+#' @param X_va Validation predictors matrix.
+#' @param y_va Validation response numeric.
 #' @param seed Integer seed.
-#' @param grid_vae Data frame with one row per configuration. Must include
-#'   list-columns `hidden_enc` and `hidden_dec` (integer vectors). Other required
-#'   columns include: `latent_dim`, `dropout`, `lr`, `beta_kl`, `alpha_y`,
-#'   `epochs`, `batch_size`, and `patience`.
-#'
-#' @return A list with:
-#' - `grid`: the input grid
-#' - `tuning_df`: metrics per configuration
+#' @param grid_vae Data frame with required columns: \code{hidden_enc} (list), \code{hidden_dec} (list),
+#'   \code{latent_dim}, \code{dropout}, \code{lr}, \code{beta_kl}, \code{alpha_y}, \code{epochs}, \code{batch_size}, \code{patience}.
+#' @return A list with \code{grid} (input grid) and \code{tuning_df} (metrics per config).
 #' @export
 tune_vae_train_val <- function(X_tr, y_tr, X_va, y_va, seed = 123, grid_vae) {
 
@@ -93,9 +85,9 @@ tune_vae_train_val <- function(X_tr, y_tr, X_va, y_va, seed = 123, grid_vae) {
 
 #' Select the best configuration from a tuning table
 #'
-#' @param tuning_df Data frame containing `RMSE_val`, `R2_val`, and `RPIQ_val`.
-#' @param selection_metric One of: `"euclid"`, `"rmse"`, `"r2"`, `"rpiq"`.
-#' @return List with `best` (one-row data frame) and `best_score`.
+#' @param tuning_df Data frame containing \code{RMSE_val}, \code{R2_val}, and \code{RPIQ_val}.
+#' @param selection_metric One of: \code{"euclid"}, \code{"rmse"}, \code{"r2"}, \code{"rpiq"}.
+#' @return List with \code{best} (one-row data frame) and \code{best_score}.
 #' @export
 select_best_from_grid <- function(tuning_df, selection_metric = c("euclid", "rmse", "r2", "rpiq")) {
 

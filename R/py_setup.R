@@ -6,7 +6,7 @@
 #' @param python Path to a Python executable.
 #' @param venv Name/path of a virtualenv.
 #' @param conda Name of a conda environment.
-#' @param persist If TRUE, stores the choice in \\code{options()} for reuse within the current R session.
+#' @param persist If TRUE, stores the choice in \code{options()} for reuse within the current R session.
 #' @return Invisibly TRUE.
 #' @export
 vae_configure <- function(python = NULL, venv = NULL, conda = NULL, persist = TRUE) {

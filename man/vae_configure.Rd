@@ -13,7 +13,7 @@ vae_configure(python = NULL, venv = NULL, conda = NULL, persist = TRUE)
 
 \item{conda}{Name of a conda environment.}
 
-\item{persist}{If TRUE, stores the choice in \\code{options()} for reuse within the current R session.}
+\item{persist}{If TRUE, stores the choice in \code{options()} for reuse within the current R session.}
 }
 \value{
 Invisibly TRUE.

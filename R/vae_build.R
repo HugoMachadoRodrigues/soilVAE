@@ -8,7 +8,7 @@
 #' @param lr Numeric. Learning rate for Adam.
 #' @param beta_kl Numeric. Weight for KL term.
 #' @param alpha_y Numeric. Weight for supervised regression head loss.
-#' @return A Python Keras model object (class \\code{VAEReg}).
+#' @return A Python Keras model object (class \code{VAEReg}).
 #' @export
 vae_build <- function(input_dim,
                       hidden_enc = c(512L, 256L),
