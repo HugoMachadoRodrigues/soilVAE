@@ -11,11 +11,13 @@ reference:
   - title: "Core functions"
     contents:
       - starts_with("vae_")
-      - tune_vae_train_val
+      - matches("^tune_vae_train_val$")
+      - tune_vae
       - select_best_from_grid
   - title: "Datasets"
     contents:
       - datsoilspc
+
 
 articles:
   - title: "Workflows"
