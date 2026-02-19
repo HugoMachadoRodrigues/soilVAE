@@ -1,22 +1,24 @@
-#' Predict y using VAEReg (via latent z -> y_head)
+#' Predict using a fitted VAEReg model
 #'
-#' @param model Python VAEReg
-#' @param X matrix
-#' @return numeric vector
+#' @param model A fitted model returned by \\code{vae_build()} and trained with \\code{vae_fit()}.
+#' @param X Matrix-like predictors.
+#' @return Numeric vector of predictions.
 #' @export
 vae_predict <- function(model, X) {
+  .soilvae_assert_tf()
   X <- as.matrix(X)
   z <- model$encode(X, training = FALSE)[[1]]
   as.numeric(model$y_head(z, training = FALSE)$numpy())
 }
 
-#' Extract latent embeddings (z) from VAEReg
+#' Extract latent embeddings (z) from a fitted VAEReg model
 #'
-#' @param model Python VAEReg
-#' @param X matrix
-#' @return matrix
+#' @param model A fitted model returned by \\code{vae_build()} and trained with \\code{vae_fit()}.
+#' @param X Matrix-like predictors.
+#' @return A numeric matrix of embeddings.
 #' @export
 vae_encode <- function(model, X) {
+  .soilvae_assert_tf()
   X <- as.matrix(X)
   z <- model$encode(X, training = FALSE)[[1]]
   z$numpy()

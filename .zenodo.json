@@ -1,0 +1,13 @@
+{
+  "title": "soilVAE: Supervised Variational Autoencoder Regression for Soil Spectroscopy",
+  "upload_type": "software",
+  "license": "MIT",
+  "creators": [
+    {
+      "name": "Rodrigues, Hugo",
+      "affiliation": "University of Florida / IFAS"
+    }
+  ],
+  "keywords": ["soil spectroscopy", "VAE", "deep learning", "reticulate", "Keras", "TensorFlow", "soil science"],
+  "notes": "R package providing supervised VAE regression and tuning utilities; Python backend via Keras 3/TensorFlow through reticulate."
+}

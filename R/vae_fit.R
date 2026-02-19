@@ -1,22 +1,24 @@
-#' Fit VAEReg
+#' Fit a VAEReg model
 #'
-#' @param model Python VAEReg object from vae_build()
-#' @param X matrix (n x p)
-#' @param y numeric vector (n)
-#' @param X_val optional matrix
-#' @param y_val optional numeric vector
-#' @param epochs integer
-#' @param batch_size integer
-#' @param patience integer for early stopping (only if validation provided)
-#' @param verbose 0/1/2
-#' @return training history (Python object)
+#' @param model A model returned by \\code{vae_build()}.
+#' @param X Matrix-like predictors.
+#' @param y Numeric response vector.
+#' @param X_val Optional validation predictors.
+#' @param y_val Optional validation response.
+#' @param epochs Integer.
+#' @param batch_size Integer.
+#' @param patience Integer. Early stopping patience (only used if validation data provided).
+#' @param verbose Integer verbosity passed to Keras.
+#' @return Invisibly the fitted model.
 #' @export
 vae_fit <- function(model, X, y,
                     X_val = NULL, y_val = NULL,
                     epochs = 80L, batch_size = 64L,
                     patience = 10L, verbose = 0L) {
 
+  .soilvae_assert_tf()
   stopifnot(!is.null(model))
+
   X <- as.matrix(X)
   y <- as.numeric(y)
 
@@ -56,4 +58,6 @@ vae_fit <- function(model, X, y,
       verbose = as.integer(verbose)
     )
   }
+
+  invisible(model)
 }
