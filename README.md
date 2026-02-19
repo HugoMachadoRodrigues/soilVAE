@@ -1,9 +1,7 @@
 
-<!-- README.Rmd is generated to README.md for GitHub. Edit README.Rmd, then run: rmarkdown::render("README.Rmd") -->
-
-# soilVAE <img src="man/figures/Badge_soilVAE.png" alt="soilVAE badge" align="right" height="90"/>
-
 <!-- badges: start -->
+
+# soilVAE <img src="man/figures/Badge_soilVAE_2.png" alt="soilVAE badge" align="right" width="234"/>
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/soilVAE)](https://CRAN.R-project.org/package=soilVAE)
@@ -158,19 +156,18 @@ This example assumes you ship `datsoilspc` inside the package
 ``` r
 data("datsoilspc", package = "soilVAE")
 str(datsoilspc)
+#> 'data.frame':    391 obs. of  5 variables:
+#>  $ clay       : num  49 7 56 14 53 24 9 18 33 27 ...
+#>  $ silt       : num  10 24 17 19 7 21 9 20 13 19 ...
+#>  $ sand       : num  42 69 27 67 40 55 83 61 54 55 ...
+#>  $ TotalCarbon: num  0.15 0.12 0.17 1.06 0.69 2.76 0.66 1.36 0.19 0.16 ...
+#>  $ spc        : num [1:391, 1:2151] 0.0898 0.1677 0.0778 0.0958 0.0359 ...
+#>   ..- attr(*, "dimnames")=List of 2
+#>   .. ..$ : NULL
+#>   .. ..$ : chr [1:2151] "350" "351" "352" "353" ...
+#>  - attr(*, "na.action")= 'omit' Named int 392
+#>   ..- attr(*, "names")= chr "63"
 ```
-
-    ## 'data.frame':    391 obs. of  5 variables:
-    ##  $ clay       : num  49 7 56 14 53 24 9 18 33 27 ...
-    ##  $ silt       : num  10 24 17 19 7 21 9 20 13 19 ...
-    ##  $ sand       : num  42 69 27 67 40 55 83 61 54 55 ...
-    ##  $ TotalCarbon: num  0.15 0.12 0.17 1.06 0.69 2.76 0.66 1.36 0.19 0.16 ...
-    ##  $ spc        : num [1:391, 1:2151] 0.0898 0.1677 0.0778 0.0958 0.0359 ...
-    ##   ..- attr(*, "dimnames")=List of 2
-    ##   .. ..$ : NULL
-    ##   .. ..$ : chr [1:2151] "350" "351" "352" "353" ...
-    ##  - attr(*, "na.action")= 'omit' Named int 392
-    ##   ..- attr(*, "names")= chr "63"
 
 Expected structure:
 
@@ -178,302 +175,423 @@ Expected structure:
   = wavelengths)
 - `datsoilspc$TotalCarbon`: numeric target (example property)
 
-### Visualize reflectance and absorbance
+## Utility: evaluation metrics (base R)
+
+We replicate typical “quantitative” metrics used in soil spectroscopy:  
+RMSE, MAE, R², bias (ME), RPIQ, and RPD.
 
 ``` r
-wavs_ref <- as.numeric(colnames(datsoilspc$spc))
-matplot(x = wavs_ref, y = t(datsoilspc$spc),
-        xlab = "Wavelength (nm)", ylab = "Reflectance",
-        type = "l", lty = 1, col = rgb(0.5,0.5,0.5,0.25))
-```
+eval_quant <- function(y, yhat) {
+  y <- as.numeric(y)
+  yhat <- as.numeric(yhat)
 
-![](README_files/figure-gfm/plots-reflectance-1.png)<!-- -->
+  ok <- is.finite(y) & is.finite(yhat)
+  y <- y[ok]
+  yhat <- yhat[ok]
 
-``` r
-spcA <- log(1 / datsoilspc$spc)
-matplot(x = wavs_ref, y = t(spcA),
-        xlab = "Wavelength (nm)", ylab = "Absorbance",
-        type = "l", lty = 1, col = rgb(0.5,0.5,0.5,0.25))
-```
+  if (length(y) < 3) {
+    return(list(
+      n = length(y),
+      ME = NA_real_, MAE = NA_real_, RMSE = NA_real_,
+      R2 = NA_real_, RPIQ = NA_real_, RPD = NA_real_
+    ))
+  }
 
-![](README_files/figure-gfm/plots-absorbance-1.png)<!-- -->
+  err <- yhat - y
+  me <- mean(err)
+  mae <- mean(abs(err))
+  rmse <- sqrt(mean(err^2))
 
-### Pre-processing (resampling → SNV → moving average)
-
-``` r
-oldWavs <- as.numeric(colnames(datsoilspc$spc))
-newWavs <- seq(min(oldWavs), max(oldWavs), by = 5)
-
-spcARs   <- prospectr::resample(spcA, wav = oldWavs, new.wav = newWavs, interpol = "linear")
-spcASnv  <- prospectr::standardNormalVariate(spcARs)
-spcAMovav <- prospectr::movav(spcASnv, w = 11)
-
-wavs <- as.numeric(colnames(spcAMovav))
-matplot(x = wavs, y = t(spcAMovav),
-        xlab = "Wavelength (nm)", ylab = "Absorbance (processed)",
-        type = "l", lty = 1, col = rgb(0.5,0.5,0.5,0.25))
-```
-
-![](README_files/figure-gfm/preprocessing-1.png)<!-- -->
-
-### Split (calibration/validation)
-
-``` r
-y <- datsoilspc$TotalCarbon
-
-calId <- sample(seq_len(nrow(spcAMovav)), size = round(0.75 * nrow(spcAMovav)))
-X_cal <- spcAMovav[calId, , drop = FALSE]
-y_cal <- y[calId]
-
-X_val <- spcAMovav[-calId, , drop = FALSE]
-y_val <- y[-calId]
-
-par(mfrow = c(1,2))
-hist(y_cal, main = "Calibration", xlab = "Total carbon")
-hist(y_val, main = "Validation", xlab = "Total carbon")
-```
-
-![](README_files/figure-gfm/split-1.png)<!-- -->
-
-``` r
-par(mfrow = c(1,1))
-```
-
-------------------------------------------------------------------------
-
-## Baseline: PLS regression
-
-``` r
-maxc <- 30
-pls_fit <- plsr(y_cal ~ X_cal, method = "oscorespls", ncomp = maxc, validation = "CV")
-
-# choose nc (you can select via RMSEP curve; here we use a fixed value for reproducibility)
-nc <- 14
-
-pls_pred_cal <- drop(predict(pls_fit, ncomp = nc, newdata = X_cal))
-pls_pred_val <- drop(predict(pls_fit, ncomp = nc, newdata = X_val))
-```
-
-``` r
-par(mfrow = c(1,2))
-plot(y_cal, pls_pred_cal, xlab = "Observed", ylab = "Predicted", main = "PLS (calibration)", pch = 16)
-abline(0, 1)
-plot(y_val, pls_pred_val, xlab = "Observed", ylab = "Predicted", main = "PLS (validation)", pch = 16)
-abline(0, 1)
-```
-
-![](README_files/figure-gfm/pls-plots-1.png)<!-- -->
-
-``` r
-par(mfrow = c(1,1))
-```
-
-------------------------------------------------------------------------
-
-## soilVAE: supervised VAE regression
-
-### 1) Detect Python + TF/Keras
-
-``` r
-c(has_py = has_py, has_tf = has_tf)
-```
-
-    ## has_py has_tf 
-    ##  FALSE  FALSE
-
-If `has_tf` is `FALSE`, you can still run the **PLS baseline** above and
-render this README without errors. To enable the VAE sections locally,
-create a Python env once (see “Python / TensorFlow setup” above),
-restart R, and re-render.
-
-### 2) Configure env (only if available)
-
-``` r
-# If has_tf is FALSE:
-# 1) create env as described above
-# 2) restart R
-# 3) run:
-soilVAE::vae_configure(conda = "soilvae-tf")
-reticulate::py_config()
-```
-
-### 3) Train a *small but strong* VAE (fast preset)
-
-``` r
-# Standardize y then back-transform (often improves stability/metrics)
-y_mu <- mean(y_cal); y_sd <- sd(y_cal)
-y_cal_s <- (y_cal - y_mu) / y_sd
-y_val_s <- (y_val - y_mu) / y_sd
-
-m_vae <- soilVAE::vae_build(
-  input_dim  = ncol(X_cal),
-  hidden_enc = c(512L, 256L, 128L),
-  hidden_dec = c(128L, 256L, 512L),
-  latent_dim = 32L,
-  dropout    = 0.10,
-  lr         = 5e-4,
-  beta_kl    = 0.5,
-  alpha_y    = 10.0
-)
-
-soilVAE::vae_fit(
-  model = m_vae,
-  X = X_cal, y = y_cal_s,
-  X_val = X_val, y_val = y_val_s,
-  epochs = 200L,
-  batch_size = 64L,
-  patience = 20L,
-  verbose = 0L
-)
-
-vae_pred_cal_s <- soilVAE::vae_predict(m_vae, X_cal)
-vae_pred_val_s <- soilVAE::vae_predict(m_vae, X_val)
-
-vae_pred_cal <- vae_pred_cal_s * y_sd + y_mu
-vae_pred_val <- vae_pred_val_s * y_sd + y_mu
-```
-
-``` r
-par(mfrow = c(1,2))
-plot(y_cal, vae_pred_cal, xlab = "Observed", ylab = "Predicted", main = "soilVAE (calibration)", pch = 16)
-abline(0, 1)
-plot(y_val, vae_pred_val, xlab = "Observed", ylab = "Predicted", main = "soilVAE (validation)", pch = 16)
-abline(0, 1)
-par(mfrow = c(1,1))
-```
-
-------------------------------------------------------------------------
-
-## Metrics (ME, MAE, RMSE, R², RPIQ, RPD)
-
-``` r
-eval_quant <- function(obs, pred) {
-  ok <- is.finite(obs) & is.finite(pred)
-  obs <- obs[ok]; pred <- pred[ok]
-
-  me  <- mean(pred - obs)
-  mae <- mean(abs(pred - obs))
-  rmse <- sqrt(mean((pred - obs)^2))
-
-  ss_res <- sum((obs - pred)^2)
-  ss_tot <- sum((obs - mean(obs))^2)
+  ss_res <- sum((y - yhat)^2)
+  ss_tot <- sum((y - mean(y))^2)
   r2 <- if (ss_tot == 0) NA_real_ else 1 - ss_res / ss_tot
 
-  rpiq <- stats::IQR(obs, na.rm = TRUE) / rmse
-  rpd  <- stats::sd(obs, na.rm = TRUE) / rmse
+  rpiq <- stats::IQR(y) / rmse
+  rpd  <- stats::sd(y) / rmse
 
-  data.frame(
-    n = length(obs),
-    ME = me, MAE = mae, RMSE = rmse, R2 = r2, RPIQ = rpiq, RPD = rpd,
-    check.names = FALSE
+  list(
+    n = length(y),
+    ME = me,
+    MAE = mae,
+    RMSE = rmse,
+    R2 = r2,
+    RPIQ = rpiq,
+    RPD = rpd
   )
 }
 
-pls_cal_m <- cbind(Model="PLS", Split="Calibration", eval_quant(y_cal, pls_pred_cal))
-pls_val_m <- cbind(Model="PLS", Split="Validation",  eval_quant(y_val, pls_pred_val))
-
-out <- rbind(pls_cal_m, pls_val_m)
-
-# Append VAE metrics only if the VAE chunk ran in this render.
-if (exists("vae_pred_cal") && exists("vae_pred_val")) {
-  vae_cal_m <- cbind(Model="soilVAE", Split="Calibration", eval_quant(y_cal, vae_pred_cal))
-  vae_val_m <- cbind(Model="soilVAE", Split="Validation",  eval_quant(y_val, vae_pred_val))
-  out <- rbind(out, vae_cal_m, vae_val_m)
-}
-
-# Round numeric metrics for presentation
-num_cols <- vapply(out, is.numeric, logical(1))
-out[num_cols] <- lapply(out[num_cols], function(x) round(x, 2))
-
-out
-```
-
-    ##   Model       Split   n   ME  MAE RMSE   R2 RPIQ  RPD
-    ## 1   PLS Calibration 293 0.00 0.37 0.56 0.86 2.04 2.63
-    ## 2   PLS  Validation  98 0.02 0.36 0.52 0.69 2.34 1.81
-
-------------------------------------------------------------------------
-
-## Why not PLS? (strategic)
-
-PLS is a **strong, well‑calibrated baseline** for many soil spectral
-tasks—especially when: - the relationship is close to linear in a
-suitable preprocessed spectral space - the dataset is relatively small
-(hundreds of samples) - interpretability and simplicity are key
-
-soilVAE is not “PLS but fancier”. It is useful when you want
-**capabilities that PLS does not provide**:
-
-1.  **Nonlinear manifold learning**: spectral variability often lies on
-    curved manifolds (moisture, particle size, roughness, instrument
-    effects). VAEs can learn *structured latent spaces* that compress
-    these factors.
-2.  **Transfer and harmonization**: once a latent representation is
-    learned, it can support domain adaptation (instrument/platform
-    shifts), data fusion, or multi‑task learning.
-3.  **Representation for process models**: hydropedology applications
-    often need embeddings that can be integrated into spatio‑temporal
-    models (e.g., linking spectra → hydraulic traits → agro‑hydrologic
-    scenarios).
-4.  **Downstream reuse**: the `vae_encode()` embeddings can be exported
-    and reused in classical models, spatial mapping, clustering, anomaly
-    detection, and monitoring.
-
-> **PLS** is the baseline for “best linear spectral inference”.  
-> **soilVAE** targets “learn a reusable representation of spectra that
-> is predictive of soil properties and transferable across conditions”.
-
-------------------------------------------------------------------------
-
-## Positioning within hydropedology & spectral inference (INRAE-aligned)
-
-In hydropedology at landscape scale, we often need to connect
-measurements to **water‑related soil functions** across space and time:
-
-- infiltrability, storage capacity, retention curve traits
-- management effects (tillage, cover crops, compaction)
-- drought scenario impacts and coupling to agro‑hydrologic models
-
-Spectral inference supports this by providing high‑throughput proxies of
-soil attributes. **soilVAE** is positioned as a *representation layer*:
-
-$$
-\text{spectra }x \;\rightarrow\; \text{latent }z \;\rightarrow\; \text{hydropedological trait }y \;\rightarrow\; \text{scenario model}
-$$
-
-This aligns with workflows where: - spectra are abundant but labels are
-sparse / heterogeneous - you want compact latent states to plug into
-spatial and temporal modeling - robustness and transfer across
-campaigns/instruments matter
-
-------------------------------------------------------------------------
-
-## Citation
-
-### Preferred citation (once DOI is minted)
-
-Rodrigues H (YEAR). *soilVAE: Supervised Variational Autoencoder
-Regression via reticulate*. R package version 0.1.0. DOI:
-10.5281/zenodo.XXXXXXX
-
-### BibTeX
-
-``` bibtex
-@Manual{soilVAE,
-  title  = {soilVAE: Supervised Variational Autoencoder Regression via reticulate},
-  author = {Hugo Rodrigues},
-  year   = {YEAR},
-  note   = {R package version 0.1.0},
-  doi    = {10.5281/zenodo.XXXXXXX},
-  url    = {https://github.com/HugoMachadoRodrigues/soilVAE}
+as_df_metrics <- function(x) {
+  data.frame(
+    n = x$n,
+    ME = round(x$ME, 2),
+    MAE = round(x$MAE, 2),
+    RMSE = round(x$RMSE, 2),
+    R2 = round(x$R2, 2),
+    RPIQ = round(x$RPIQ, 2),
+    RPD = round(x$RPD, 2),
+    stringsAsFactors = FALSE
+  )
 }
 ```
 
-------------------------------------------------------------------------
+# Plot reflectance spectra
 
-## References
+``` r
+matplot(
+  x = as.numeric(colnames(datsoilspc$spc)),
+  y = t(as.matrix(datsoilspc$spc)),
+  xlab = "Wavelength / nm",
+  ylab = "Reflectance",
+  ylim = c(0, 1),
+  type = "l",
+  lty = 1,
+  col = rgb(0.5, 0.5, 0.5, alpha = 0.3)
+)
+```
 
-Wadoux, A. M. J.-C., Malone, B., Minasny, B., Fajardo, M., & McBratney,
-A. B. (2021). *Soil spectral inference with R: Analyzing digital soil
-spectra using the R programming environment*. Springer. DOI:
-10.1007/978-3-030-64896-1.
+![](README_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+
+# Convert reflectance to absorbance
+
+``` r
+datsoilspc$spcA <- log(1 / as.matrix(datsoilspc$spc))
+
+matplot(
+  x = as.numeric(colnames(datsoilspc$spcA)),
+  y = t(datsoilspc$spcA),
+  xlab = "Wavelength / nm",
+  ylab = "Absorbance",
+  ylim = c(0, 4),
+  type = "l",
+  lty = 1,
+  col = rgb(0.5, 0.5, 0.5, alpha = 0.3)
+)
+```
+
+![](README_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
+
+# Preprocessing: resample (5 nm) + SNV + moving average
+
+``` r
+oldWavs <- as.numeric(colnames(datsoilspc$spcA))
+newWavs <- seq(min(oldWavs), max(oldWavs), by = 5)
+
+datsoilspc$spcARs <- prospectr::resample(
+  X = datsoilspc$spcA,
+  wav = oldWavs,
+  new.wav = newWavs,
+  interpol = "linear"
+)
+
+datsoilspc$spcASnv <- prospectr::standardNormalVariate(datsoilspc$spcARs)
+datsoilspc$spcAMovav <- prospectr::movav(datsoilspc$spcASnv, w = 11)
+
+wavs <- as.numeric(colnames(datsoilspc$spcAMovav))
+
+matplot(
+  x = wavs,
+  y = t(datsoilspc$spcAMovav),
+  xlab = "Wavelength / nm",
+  ylab = "Absorbance (SNV + movav)",
+  type = "l",
+  lty = 1,
+  col = rgb(0.5, 0.5, 0.5, alpha = 0.3)
+)
+```
+
+![](README_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
+
+# Split calibration vs validation
+
+``` r
+set.seed(19101991)
+
+calId <- sample(seq_len(nrow(datsoilspc)), size = round(0.75 * nrow(datsoilspc)))
+datC <- datsoilspc[calId, ]
+datV <- datsoilspc[-calId, ]  # <-- TEST
+
+par(mfrow = c(1, 2))
+hist(datC$TotalCarbon, main = "Calibration (datC)", xlab = "Total carbon")
+hist(datV$TotalCarbon, main = "TEST (datV)", xlab = "Total carbon")
+```
+
+![](README_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
+
+``` r
+par(mfrow = c(1, 1))
+```
+
+# Baseline model: PLS
+
+We fit PLS on calibration and evaluate on validation.
+
+``` r
+maxc <- 30
+
+soilCPlsModel <- pls::plsr(
+  TotalCarbon ~ spcAMovav,
+  data = datC,
+  method = "oscorespls",
+  ncomp = maxc,
+  validation = "CV"
+)
+
+plot(soilCPlsModel, "val", main = "PLS CV performance (datC)", xlab = "Number of components")
+```
+
+![](README_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
+
+# Choose number of components (example uses `nc = 14`).
+
+``` r
+nc <- 14
+
+# Refit on full datC with chosen nc (PLS itself uses all comps up to maxc; prediction uses nc)
+soilCPlsPred_C <- as.numeric(predict(soilCPlsModel, ncomp = nc, newdata = datC$spcAMovav))
+soilCPlsPred_T <- as.numeric(predict(soilCPlsModel, ncomp = nc, newdata = datV$spcAMovav))
+
+par(mfrow = c(1, 2))
+plot(datC$TotalCarbon, soilCPlsPred_C, xlab="Observed", ylab="Predicted", main="PLS (datC)", pch=16); abline(0,1)
+plot(datV$TotalCarbon, soilCPlsPred_T, xlab="Observed", ylab="Predicted", main="PLS (TEST datV)", pch=16); abline(0,1)
+```
+
+![](README_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
+
+``` r
+par(mfrow = c(1, 1))
+```
+
+# Metrics (PLS)
+
+We use the same evaluation function used in many soilspec workflows.
+
+``` r
+pls_cal <- eval_quant(datC$TotalCarbon, soilCPlsPred_C)
+pls_tst <- eval_quant(datV$TotalCarbon, soilCPlsPred_T)
+
+as_df_metrics(pls_cal)
+#>     n ME  MAE RMSE   R2 RPIQ  RPD
+#> 1 293  0 0.37 0.56 0.86 2.04 2.63
+as_df_metrics(pls_tst)
+#>    n   ME  MAE RMSE   R2 RPIQ  RPD
+#> 1 98 0.02 0.36 0.52 0.69 2.34 1.81
+```
+
+# Supervised VAE regression: soilVAE
+
+### Availability check (TensorFlow/Keras)
+
+This chunk detects if Python + TensorFlow + Keras can be loaded.  
+If not available, the VAE section is skipped (vignette still builds).
+
+``` r
+has_py <- reticulate::py_available(initialize = FALSE)
+
+has_tf <- FALSE
+if (has_py) {
+  try(reticulate::py_config(), silent = TRUE)
+  has_tf <- reticulate::py_module_available("tensorflow") &&
+            reticulate::py_module_available("keras")
+}
+
+has_py
+#> [1] TRUE
+has_tf
+#> [1] TRUE
+```
+
+### Prepare matrices (same predictors as PLS preprocessing)
+
+Prepare Train/Val internal split within datC (no y transform; scale X
+only)
+
+``` r
+set.seed(19101991)
+
+nC <- nrow(datC)
+id_tr <- sample(seq_len(nC), size = round(0.80 * nC))
+datC_tr <- datC[id_tr, ]
+datC_va <- datC[-id_tr, ]
+
+# y stays in original units (no transformation)
+y_tr <- as.numeric(datC_tr$TotalCarbon)
+y_va <- as.numeric(datC_va$TotalCarbon)
+
+# X: scale predictors using TRAIN center/scale only
+X_tr_raw <- as.matrix(datC_tr$spcAMovav)
+X_va_raw <- as.matrix(datC_va$spcAMovav)
+X_te_raw <- as.matrix(datV$spcAMovav)   # TEST
+
+X_tr <- scale(X_tr_raw)
+X_center <- attr(X_tr, "scaled:center")
+X_scale  <- attr(X_tr, "scaled:scale")
+
+# safe scaling: avoid division by zero
+X_scale[X_scale == 0] <- 1
+
+X_va <- scale(X_va_raw, center = X_center, scale = X_scale)
+X_te <- scale(X_te_raw, center = X_center, scale = X_scale)
+
+# sanity checks (dims)
+dim(X_tr)
+#> [1] 234 421
+length(y_tr)
+#> [1] 234
+dim(X_va)
+#> [1]  59 421
+length(y_va)
+#> [1] 59
+dim(X_te)
+#> [1]  98 421
+```
+
+Prepare Train/Val internal split within datC (no y transform; scale X
+only)
+
+We model `TotalCarbon` using the preprocessed spectra matrix
+`spcAMovav`.
+
+### Fit + evaluate soilVAE (skipped if TF/Keras unavailable)
+
+``` r
+reticulate::py_run_string("
+import os
+import random
+import numpy as np
+import tensorflow as tf
+
+os.environ['PYTHONHASHSEED'] = '0'
+random.seed(19101991)
+np.random.seed(19101991)
+tf.random.set_seed(19101991)
+")
+
+Sys.setenv(TF_DETERMINISTIC_OPS = "1")
+```
+
+``` r
+if (!has_tf) {
+  message("TensorFlow/Keras not available; skipping soilVAE section.")
+} else {
+
+  # Optional: force a specific python/venv/conda, if needed.
+  # soilVAE::vae_configure(conda = "soilvae-tf")
+
+  grid_vae <- data.frame(
+    latent_dim = c(8L, 16L, 32L, 64L),
+    dropout    = c(0.20, 0.30),
+    lr         = c(5e-4),
+    beta_kl    = c(0.01),
+    alpha_y    = c(5),
+    epochs     = c(500L),
+    batch_size = c(64L, 128L),
+    patience   = c(50L),
+    stringsAsFactors = FALSE
+  )
+
+  grid_vae$hidden_enc <- list(c(512L, 256L, 128L))
+  grid_vae$hidden_dec <- list(c(128L, 256L, 512L))
+
+  tuned <- soilVAE::tune_vae_train_val(
+    X_tr = X_tr, y_tr = y_tr,
+    X_va = X_va, y_va = y_va,
+    seed = 19101991,
+    grid_vae = grid_vae
+  )
+
+  best <- soilVAE::select_best_from_grid(tuned$tuning_df, selection_metric = "euclid")
+
+  cfg <- best$best
+
+  # Refit on full datC (train+val) using early stopping monitored on the internal val (datC_va)
+  m_vae <- soilVAE::vae_build(
+    input_dim  = ncol(X_tr),
+    hidden_enc = as.integer(strsplit(cfg$hidden_enc_str, "-")[[1]]),
+    hidden_dec = as.integer(strsplit(cfg$hidden_dec_str, "-")[[1]]),
+    latent_dim = as.integer(cfg$latent_dim),
+    dropout    = as.numeric(cfg$dropout),
+    lr         = as.numeric(cfg$lr),
+    beta_kl    = as.numeric(cfg$beta_kl),
+    alpha_y    = as.numeric(cfg$alpha_y)
+  )
+
+  soilVAE::vae_fit(
+    model = m_vae,
+    X = X_tr, y = y_tr,
+    X_val = X_va, y_val = y_va,
+    epochs = as.integer(cfg$epochs),
+    batch_size = as.integer(cfg$batch_size),
+    patience = as.integer(cfg$patience),
+    verbose = 0L
+  )
+
+  yhat_tr <- as.numeric(soilVAE::vae_predict(m_vae, X_tr))
+  yhat_va <- as.numeric(soilVAE::vae_predict(m_vae, X_va))
+  yhat_te <- as.numeric(soilVAE::vae_predict(m_vae, X_te))
+
+  # Metrics: internal train/val + FINAL TEST
+  vae_trn <- eval_quant(y_tr, yhat_tr)
+  vae_val <- eval_quant(y_va, yhat_va)
+  vae_tst <- eval_quant(as.numeric(datV$TotalCarbon), yhat_te)
+
+  # Plots
+  par(mfrow = c(1, 3))
+  plot(y_tr, yhat_tr, main="soilVAE (Train)", xlab="Observed", ylab="Predicted", pch=16); abline(0,1)
+  plot(y_va, yhat_va, main="soilVAE (Val)",   xlab="Observed", ylab="Predicted", pch=16); abline(0,1)
+  plot(as.numeric(datV$TotalCarbon), yhat_te, main="soilVAE (TEST datV)", xlab="Observed", ylab="Predicted", pch=16); abline(0,1)
+  par(mfrow = c(1, 1))
+}
+```
+
+![](README_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->
+
+## Compare PLS vs soilVAE (TEST = datV)
+
+We present a compact comparison table.
+
+``` r
+if (!has_tf) {
+
+  tab <- rbind(
+    cbind(Model = "PLS", Split = "Calibration (datC)", as_df_metrics(pls_cal)),
+    cbind(Model = "PLS", Split = "TEST (datV)",        as_df_metrics(pls_tst))
+  )
+
+} else {
+
+  tab <- rbind(
+    cbind(Model = "PLS",    Split = "Calibration (datC)", as_df_metrics(pls_cal)),
+    cbind(Model = "PLS",    Split = "TEST (datV)",        as_df_metrics(pls_tst)),
+    cbind(Model = "soilVAE",Split = "Train (internal)",   as_df_metrics(vae_trn)),
+    cbind(Model = "soilVAE",Split = "Val (internal)",     as_df_metrics(vae_val)),
+    cbind(Model = "soilVAE",Split = "TEST (datV)",        as_df_metrics(vae_tst))
+  )
+
+}
+
+row.names(tab) <- NULL
+tab
+#>     Model              Split   n    ME  MAE RMSE   R2 RPIQ  RPD
+#> 1     PLS Calibration (datC) 293  0.00 0.37 0.56 0.86 2.04 2.63
+#> 2     PLS        TEST (datV)  98  0.02 0.36 0.52 0.69 2.34 1.81
+#> 3 soilVAE   Train (internal) 234 -0.07 0.31 0.44 0.92 2.54 3.60
+#> 4 soilVAE     Val (internal)  59 -0.10 0.33 0.51 0.76 2.36 2.04
+#> 5 soilVAE        TEST (datV)  98 -0.04 0.33 0.47 0.74 2.56 1.97
+```
+
+If TensorFlow/Keras was not available, you can still use the PLS section
+and install a compatible Python stack later.
+
+## Notes for reproducibility
+
+- The PLS workflow depends only on R packages `pls` and `prospectr`.
+
+- The supervised VAE requires:
+
+<!-- -->
+
+    -   Python (\>= 3.9)
+
+    -   TensorFlow (\>= 2.13)
+
+    -   Keras (\>= 3)
