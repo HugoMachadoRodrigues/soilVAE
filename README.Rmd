@@ -3,6 +3,8 @@ output: github_document
 bibliography: vignettes/references.bib
 ---
 
+
+
 <!-- badges: start -->
 
 # soilVAE <img src="man/figures/Badge_soilVAE_2.png" alt="soilVAE badge" align="right" width="287"/>

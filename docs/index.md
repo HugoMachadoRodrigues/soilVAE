@@ -257,7 +257,7 @@ matplot(
 )
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-16-1.png)
+![](README_files/figure-gfm/unnamed-chunk-2-1.png)
 
 # Convert reflectance to absorbance
 
@@ -276,7 +276,7 @@ matplot(
 )
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-17-1.png)
+![](README_files/figure-gfm/unnamed-chunk-3-1.png)
 
 # Preprocessing: resample (5 nm) + SNV + moving average
 
@@ -307,7 +307,7 @@ matplot(
 )
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-18-1.png)
+![](README_files/figure-gfm/unnamed-chunk-4-1.png)
 
 # Split calibration vs validation
 
@@ -323,7 +323,7 @@ hist(datC$TotalCarbon, main = "Calibration (datC)", xlab = "Total carbon")
 hist(datV$TotalCarbon, main = "TEST (datV)", xlab = "Total carbon")
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-19-1.png)
+![](README_files/figure-gfm/unnamed-chunk-5-1.png)
 
 ``` r
 par(mfrow = c(1, 1))
@@ -347,7 +347,7 @@ soilCPlsModel <- pls::plsr(
 plot(soilCPlsModel, "val", main = "PLS CV performance (datC)", xlab = "Number of components")
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-20-1.png)
+![](README_files/figure-gfm/unnamed-chunk-6-1.png)
 
 # Choose number of components (example uses `nc = 14`).
 
@@ -363,7 +363,7 @@ plot(datC$TotalCarbon, soilCPlsPred_C, xlab="Observed", ylab="Predicted", main="
 plot(datV$TotalCarbon, soilCPlsPred_T, xlab="Observed", ylab="Predicted", main="PLS (TEST datV)", pch=16); abline(0,1)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-21-1.png)
+![](README_files/figure-gfm/unnamed-chunk-7-1.png)
 
 ``` r
 par(mfrow = c(1, 1))
@@ -599,7 +599,7 @@ if (!has_tf) {
 }
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-26-1.png)
+![](README_files/figure-gfm/unnamed-chunk-12-1.png)
 
 ## Compare PLS vs soilVAE (TEST = datV)
 
