@@ -413,13 +413,13 @@ if (has_py) {
 has_py
 ```
 
-    ## [1] TRUE
+    ## [1] FALSE
 
 ``` r
 has_tf
 ```
 
-    ## [1] TRUE
+    ## [1] FALSE
 
 ### Prepare matrices (same predictors as PLS preprocessing)
 
@@ -584,7 +584,7 @@ if (!has_tf) {
 }
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+    ## TensorFlow/Keras not available; skipping soilVAE section.
 
 ## Compare PLS vs soilVAE (TEST = datV)
 
@@ -614,12 +614,9 @@ row.names(tab) <- NULL
 tab
 ```
 
-    ##     Model              Split   n    ME  MAE RMSE   R2 RPIQ  RPD
-    ## 1     PLS Calibration (datC) 293  0.00 0.37 0.56 0.86 2.04 2.63
-    ## 2     PLS        TEST (datV)  98  0.02 0.36 0.52 0.69 2.34 1.81
-    ## 3 soilVAE   Train (internal) 234 -0.07 0.31 0.44 0.92 2.54 3.60
-    ## 4 soilVAE     Val (internal)  59 -0.10 0.33 0.51 0.76 2.36 2.04
-    ## 5 soilVAE        TEST (datV)  98 -0.04 0.33 0.47 0.74 2.56 1.97
+    ##   Model              Split   n   ME  MAE RMSE   R2 RPIQ  RPD
+    ## 1   PLS Calibration (datC) 293 0.00 0.37 0.56 0.86 2.04 2.63
+    ## 2   PLS        TEST (datV)  98 0.02 0.36 0.52 0.69 2.34 1.81
 
 If TensorFlow/Keras was not available, you can still use the PLS section
 and install a compatible Python stack later.
