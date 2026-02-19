@@ -8,16 +8,17 @@ home:
   description: Supervised VAE regression (Keras/TensorFlow via reticulate) for soil spectroscopy and high-dimensional predictors.
 
 reference:
-  - title: "Core functions"
+  - title: "Core API"
     contents:
-      - starts_with("vae_")
-      - matches("^tune_vae_train_val$")
-      - tune_vae
+      - vae_configure
+      - vae_build
+      - vae_fit
+      - vae_predict
+      - vae_encode
+  - title: "Tuning"
+    contents:
+      - tune_vae_train_val
       - select_best_from_grid
-  - title: "Datasets"
-    contents:
-      - datsoilspc
-
 
 articles:
   - title: "Workflows"
