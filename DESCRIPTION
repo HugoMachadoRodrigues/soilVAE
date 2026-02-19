@@ -22,3 +22,6 @@ Suggests:
     pls
 VignetteBuilder: knitr
 SystemRequirements: Python (>= 3.9); TensorFlow (>= 2.13); Keras (>= 3)
+URL: https://hugomachadorodrigues.github.io/soilVAE, https://github.com/HugoMachadoRodrigues/soilVAE
+BugReports: https://github.com/HugoMachadoRodrigues/soilVAE/issues
+

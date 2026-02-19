@@ -1,6 +1,6 @@
 ---
 output: github_document
-bibliography: references.bib
+bibliography: vignettes/references.bib
 ---
 
 <!-- badges: start -->
@@ -106,7 +106,7 @@ soilVAE::vae_configure(python = "C:/path/to/python.exe")
 
 ------------------------------------------------------------------------
 
-## Reproducible case study (spectra → pre-processing → PLS baseline → soilVAE)
+## Reproducible case study (spectra -> pre-processing -> PLS baseline -> soilVAE)
 
 This follows the workflow style commonly used in soil spectral inference tutorials (e.g., Wadoux et al., 2021) [@wadoux2021], with a direct comparison between a **PLS baseline** and **soilVAE**.
 
@@ -122,7 +122,9 @@ library(prospectr)
 library(pls)
 library(reticulate)
 
-# soilVAE should already be installed if you're reading this inside the package
+if (!requireNamespace("soilVAE", quietly = TRUE)) {
+  stop("soilVAE is not installed. Install it with remotes::install_github('HugoMachadoRodrigues/soilVAE').")
+}
 library(soilVAE)
 
 # Defensive: detect Python + TF/Keras early, so the README can render everywhere.
@@ -409,6 +411,8 @@ We model `TotalCarbon` using the preprocessed spectra matrix `spcAMovav`.
 ### Fit + evaluate soilVAE (skipped if TF/Keras unavailable)
 
 ```{r}
+
+
 reticulate::py_run_string("
 import os
 import random
@@ -422,12 +426,17 @@ tf.random.set_seed(19101991)
 ")
 
 Sys.setenv(TF_DETERMINISTIC_OPS = "1")
+
 ```
 
 ```{r}
+
 if (!has_tf) {
   message("TensorFlow/Keras not available; skipping soilVAE section.")
 } else {
+  
+  Sys.setenv(TF_CPP_MIN_LOG_LEVEL = "2")         # reduce logs INFO/WARN
+  Sys.setenv(TF_ENABLE_ONEDNN_OPTS = "0")    
 
   # Optional: force a specific python/venv/conda, if needed.
   # soilVAE::vae_configure(conda = "soilvae-tf")
