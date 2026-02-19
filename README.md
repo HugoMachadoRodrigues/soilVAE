@@ -1,7 +1,7 @@
 
 <!-- badges: start -->
 
-# soilVAE <img src="man/figures/Badge_soilVAE_2.png" alt="soilVAE badge" align="right" width="234"/>
+# soilVAE <img src="man/figures/Badge_soilVAE_2.png" alt="soilVAE badge" align="right" width="287"/>
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/soilVAE)](https://CRAN.R-project.org/package=soilVAE)
@@ -120,8 +120,8 @@ soilVAE::vae_configure(python = "C:/path/to/python.exe")
 ## Reproducible case study (spectra → pre-processing → PLS baseline → soilVAE)
 
 This follows the workflow style commonly used in soil spectral inference
-tutorials (e.g., Wadoux et al., 2021), with a direct comparison between
-a **PLS baseline** and **soilVAE**.
+tutorials (e.g., Wadoux et al., 2021) (Wadoux et al. 2021), with a
+direct comparison between a **PLS baseline** and **soilVAE**.
 
 ### Packages
 
@@ -152,6 +152,14 @@ if (has_py) {
 
 This example assumes you ship `datsoilspc` inside the package
 (`data/datsoilspc.rda`).
+
+This dataset is provided and described at Geeves et al. (1995)
+
+*Geeves, G. W. (Guy W.) & New South Wales. Department of Conservation
+and Land Management & CSIRO. Division of Soils. (1995). The physical,
+chemical and morphological properties of soils in the wheat-belt of
+southern N.S.W. and northern Victoria / G.W. Geeves … \[et al.\]. Glen
+Osmond, S. Aust. : CSIRO Division of Soils*
 
 ``` r
 data("datsoilspc", package = "soilVAE")
@@ -249,7 +257,7 @@ matplot(
 )
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
 # Convert reflectance to absorbance
 
@@ -268,7 +276,7 @@ matplot(
 )
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
 # Preprocessing: resample (5 nm) + SNV + moving average
 
@@ -299,7 +307,7 @@ matplot(
 )
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 # Split calibration vs validation
 
@@ -315,7 +323,7 @@ hist(datC$TotalCarbon, main = "Calibration (datC)", xlab = "Total carbon")
 hist(datV$TotalCarbon, main = "TEST (datV)", xlab = "Total carbon")
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ``` r
 par(mfrow = c(1, 1))
@@ -339,7 +347,7 @@ soilCPlsModel <- pls::plsr(
 plot(soilCPlsModel, "val", main = "PLS CV performance (datC)", xlab = "Number of components")
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 # Choose number of components (example uses `nc = 14`).
 
@@ -355,7 +363,7 @@ plot(datC$TotalCarbon, soilCPlsPred_C, xlab="Observed", ylab="Predicted", main="
 plot(datV$TotalCarbon, soilCPlsPred_T, xlab="Observed", ylab="Predicted", main="PLS (TEST datV)", pch=16); abline(0,1)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 ``` r
 par(mfrow = c(1, 1))
@@ -543,7 +551,7 @@ if (!has_tf) {
 }
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 ## Compare PLS vs soilVAE (TEST = datV)
 
@@ -595,3 +603,24 @@ and install a compatible Python stack later.
     -   TensorFlow (\>= 2.13)
 
     -   Keras (\>= 3)
+
+## Notes for life
+
+*Education without ethics is only rhetoric.*
+
+*Power without reflection is violence*
+
+<div id="refs" class="references csl-bib-body hanging-indent"
+entry-spacing="0">
+
+<div id="ref-wadoux2021" class="csl-entry">
+
+Wadoux, Alexandre M. J.-C., Brendan Malone, Budiman Minasny, Mario
+Fajardo, and Alex B. McBratney. 2021. *Soil Spectral Inference with R:
+Analyzing Digital Soil Spectra Using the R Programming Environment*.
+Progress in Soil Science. Cham: Springer International Publishing.
+<https://doi.org/10.1007/978-3-030-64896-1>.
+
+</div>
+
+</div>
