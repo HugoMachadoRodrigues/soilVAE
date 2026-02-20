@@ -19,6 +19,9 @@ reference:
     contents:
       - tune_vae_train_val
       - select_best_from_grid
+  - title: "Data"
+    contents:
+      - datsoilspc
 
 articles:
   - title: "Workflows"

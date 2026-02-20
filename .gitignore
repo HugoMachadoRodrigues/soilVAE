@@ -1,1 +1,7 @@
 .Rproj.user
+/doc/
+/Meta/
+*.html
+*.pdf
+*.R
+*_files/

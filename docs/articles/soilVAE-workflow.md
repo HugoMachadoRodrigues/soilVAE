@@ -1,33 +1,17 @@
----
-title: "soilVAE workflow"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{soilVAE workflow}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
-bibliography: references.bib
----
+# soilVAE workflow
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.path = "/man/figures/",
-  fig.width = 7,
-  fig.height = 4
-)
+This vignette mirrors the main package example (see `README`) and
+compares a **PLS** baseline to **soilVAE** on the included dataset
+`datsoilspc`.
 
-set.seed(19101991)
-```
-
-This vignette mirrors the main package example (see `README`) and compares a **PLS** baseline to **soilVAE** on the included dataset `datsoilspc`.
-
-> **CRAN/CI note**: this vignette is written to build on systems **without** Python/TensorFlow.  
-> The **VAE training** chunks are automatically skipped unless TensorFlow/Keras are available.
+> **CRAN/CI note**: this vignette is written to build on systems
+> **without** Python/TensorFlow.  
+> The **VAE training** chunks are automatically skipped unless
+> TensorFlow/Keras are available.
 
 ## Packages
 
-```{r, message=FALSE}
+``` r
 # IMPORTANT: do NOT use devtools in vignettes (it is not available on CRAN/CI runners).
 # Only load packages that are in Imports/Suggests.
 
@@ -46,14 +30,23 @@ library(soilVAE)
 
 ## Data
 
-```{r}
+``` r
 data("datsoilspc", package = "soilVAE")
 str(datsoilspc, max.level = 1)
+#> 'data.frame':    391 obs. of  5 variables:
+#>  $ clay       : num  49 7 56 14 53 24 9 18 33 27 ...
+#>  $ silt       : num  10 24 17 19 7 21 9 20 13 19 ...
+#>  $ sand       : num  42 69 27 67 40 55 83 61 54 55 ...
+#>  $ TotalCarbon: num  0.15 0.12 0.17 1.06 0.69 2.76 0.66 1.36 0.19 0.16 ...
+#>  $ spc        : num [1:391, 1:2151] 0.0898 0.1677 0.0778 0.0958 0.0359 ...
+#>   ..- attr(*, "dimnames")=List of 2
+#>  - attr(*, "na.action")= 'omit' Named int 392
+#>   ..- attr(*, "names")= chr "63"
 ```
 
 ## Utility: evaluation metrics (base R)
 
-```{r}
+``` r
 eval_quant <- function(y, yhat) {
   y <- as.numeric(y); yhat <- as.numeric(yhat)
   ok <- is.finite(y) & is.finite(yhat)
@@ -95,7 +88,7 @@ as_df_metrics <- function(x) {
 
 ## Spectra preprocessing (reflectance → absorbance → resample → SNV → movav)
 
-```{r}
+``` r
 # Reflectance → absorbance
 spcA <- log(1 / as.matrix(datsoilspc$spc))
 
@@ -118,7 +111,7 @@ spcAMovav <- prospectr::movav(spcASnv, w = 11)
 datsoilspc$spcAMovav <- spcAMovav
 ```
 
-```{r}
+``` r
 matplot(
   x = as.numeric(colnames(datsoilspc$spcAMovav)),
   y = t(datsoilspc$spcAMovav),
@@ -129,9 +122,11 @@ matplot(
 )
 ```
 
+![](../../../../reference/figures/unnamed-chunk-5-1.png)
+
 ## Split: calibration (datC) vs test (datV)
 
-```{r}
+``` r
 set.seed(19101991)
 calId <- sample(seq_len(nrow(datsoilspc)), size = round(0.75 * nrow(datsoilspc)))
 
@@ -141,7 +136,7 @@ datV <- datsoilspc[-calId, ]
 
 ## Baseline: PLS (train on datC, evaluate on datV)
 
-```{r}
+``` r
 maxc <- 30
 pls_fit <- pls::plsr(
   TotalCarbon ~ spcAMovav,
@@ -154,7 +149,9 @@ pls_fit <- pls::plsr(
 plot(pls_fit, "val", main = "PLS CV performance", xlab = "Number of components")
 ```
 
-```{r}
+![](../../../../reference/figures/unnamed-chunk-7-1.png)
+
+``` r
 nc <- 14
 
 pls_pred_C <- as.numeric(predict(pls_fit, ncomp = nc, newdata = datC$spcAMovav))
@@ -167,11 +164,14 @@ rbind(
   cbind(Model = "PLS", Split = "Calibration (datC)", as_df_metrics(pls_cal)),
   cbind(Model = "PLS", Split = "TEST (datV)",        as_df_metrics(pls_tst))
 )
+#>   Model              Split   n   ME  MAE RMSE   R2 RPIQ  RPD
+#> 1   PLS Calibration (datC) 293 0.00 0.37 0.56 0.86 2.04 2.63
+#> 2   PLS        TEST (datV)  98 0.02 0.36 0.52 0.69 2.34 1.81
 ```
 
 ## soilVAE: supervised VAE regression (skips automatically if TF/Keras unavailable)
 
-```{r}
+``` r
 has_py <- reticulate::py_available(initialize = FALSE)
 has_tf <- FALSE
 if (has_py) {
@@ -181,12 +181,14 @@ if (has_py) {
 }
 
 has_py
+#> [1] FALSE
 has_tf
+#> [1] FALSE
 ```
 
 ### Prepare matrices (scale **X** using train stats; keep **y** in original units)
 
-```{r}
+``` r
 # Predictors
 X_tr <- scale(as.matrix(datC$spcAMovav))
 X_center <- attr(X_tr, "scaled:center")
@@ -198,12 +200,14 @@ y_tr <- as.numeric(datC$TotalCarbon)
 y_te <- as.numeric(datV$TotalCarbon)
 
 dim(X_tr)
+#> [1] 293 421
 length(y_tr)
+#> [1] 293
 ```
 
 ### Fit and evaluate (only runs when TF/Keras is available)
 
-```{r, eval=has_tf}
+``` r
 # If needed, pin an env *before* importing TF/Keras:
 # soilVAE::vae_configure(conda = "soilvae-tf")
 
@@ -283,7 +287,7 @@ rbind(
 
 ## Final comparison table (PLS vs soilVAE)
 
-```{r, eval=has_tf}
+``` r
 tab <- rbind(
   cbind(Model = "PLS",    Split = "Calibration (datC)", as_df_metrics(pls_cal)),
   cbind(Model = "PLS",    Split = "TEST (datV)",        as_df_metrics(pls_tst)),

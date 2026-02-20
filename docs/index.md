@@ -1,57 +1,45 @@
----
-output: github_document
-bibliography: references.bib
----
+# soilVAE ![soilVAE badge](reference/figures/Badge_soilVAE_2.png)
 
+[![CRAN
+status](https://www.r-pkg.org/badges/version/soilVAE)](https://CRAN.R-project.org/package=soilVAE)
+[![R-CMD-check](https://github.com/HugoMachadoRodrigues/soilVAE/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/HugoMachadoRodrigues/soilVAE/actions/workflows/R-CMD-check.yaml)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
+![Python](https://img.shields.io/badge/Python-%3E%3D3.9-blue)![TensorFlow](https://img.shields.io/badge/TensorFlow-%3E%3D2.13-orange)
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.path = "man/figures/",
-  fig.width = 7,
-  fig.height = 4
-)
+Supervised **Variational Autoencoder (VAE)** regression for
+high‑dimensional predictors (e.g., VIS–NIR–SWIR soil spectroscopy),
+implemented in **Python TensorFlow/Keras** and exposed in R via
+**reticulate**.
 
-
-set.seed(19101991)
-```
-
-
-<!-- badges: start -->
-
-# soilVAE <img src="man/figures/Badge_soilVAE_2.png" alt="soilVAE badge" align="right" width="287"/>
-
-[![CRAN status](https://www.r-pkg.org/badges/version/soilVAE)](https://CRAN.R-project.org/package=soilVAE) [![R-CMD-check](https://github.com/HugoMachadoRodrigues/soilVAE/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/HugoMachadoRodrigues/soilVAE/actions/workflows/R-CMD-check.yaml) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX) ![Python](https://img.shields.io/badge/Python-%3E%3D3.9-blue) ![TensorFlow](https://img.shields.io/badge/TensorFlow-%3E%3D2.13-orange)
-
-<!-- badges: end -->
-
-Supervised **Variational Autoencoder (VAE)** regression for high‑dimensional predictors (e.g., VIS–NIR–SWIR soil spectroscopy), implemented in **Python TensorFlow/Keras** and exposed in R via **reticulate**.
-
-The README is also the **main reproducible case study**, mirroring the vignette (`vignettes/soilVAE-workflow.Rmd`) so a reader can understand the *why*, *how*, and *performance* without opening additional files.
+The README is also the **main reproducible case study**, mirroring the
+vignette (`vignettes/soilVAE-workflow.Rmd`) so a reader can understand
+the *why*, *how*, and *performance* without opening additional files.
 
 ------------------------------------------------------------------------
 
 ## What soilVAE does
 
-Given spectra $x\in\mathbb{R}^p$ and a continuous soil property $y\in\mathbb{R}$, soilVAE learns:
+Given spectra $`x\in\mathbb{R}^p`$ and a continuous soil property
+$`y\in\mathbb{R}`$, soilVAE learns:
 
--   an encoder $q_\phi(z\mid x)$ mapping spectra to a latent embedding $z\in\mathbb{R}^d$
--   a decoder $p_\theta(x\mid z)$ reconstructing spectra
--   a supervised head $\hat y = f_\psi(z)$ predicting the property
+- an encoder $`q_\phi(z\mid x)`$ mapping spectra to a latent embedding
+  $`z\in\mathbb{R}^d`$
+- a decoder $`p_\theta(x\mid z)`$ reconstructing spectra
+- a supervised head $`\hat y = f_\psi(z)`$ predicting the property
 
-### Objective (supervised $\beta$-VAE)
+### Objective (supervised $`\beta`$-VAE)
 
 We minimize a weighted sum:
 
-$$
+``` math
+
 \mathcal{L}(x,y) =
 \underbrace{\|x-\hat x\|_2^2}_{\text{reconstruction}}
 \;+\;
 \beta\;\underbrace{D_{KL}\!\left(q_\phi(z\mid x)\,\|\,\mathcal{N}(0,I)\right)}_{\text{regularization}}
 \;+\;
 \alpha\;\underbrace{\|y-\hat y\|_2^2}_{\text{regression}}.
-$$
+```
 
 In the package API, these correspond to `beta_kl = β` and `alpha_y = α`.
 
@@ -76,13 +64,16 @@ remotes::install_github("HugoMachadoRodrigues/soilVAE")
 
 ## Python / TensorFlow setup that does *not* surprise the user
 
-Because deep learning depends on external Python libraries, this README uses a **defensive pattern**:
+Because deep learning depends on external Python libraries, this README
+uses a **defensive pattern**:
 
-1)  detect whether Python + TF/Keras are available\
-2)  if not, show *exactly* how to create a conda env using **conda-forge only**\
-3)  run the VAE only when the environment is ready
+1.  detect whether Python + TF/Keras are available  
+2.  if not, show *exactly* how to create a conda env using **conda-forge
+    only**  
+3.  run the VAE only when the environment is ready
 
-> **Important**: `reticulate` “locks” the Python used **per R session**. If you change env variables or `use_*()` calls, restart R.
+> **Important**: `reticulate` “locks” the Python used **per R session**.
+> If you change env variables or `use_*()` calls, restart R.
 
 ### Option A (recommended): conda env (conda-forge only)
 
@@ -121,13 +112,15 @@ soilVAE::vae_configure(python = "C:/path/to/python.exe")
 
 ------------------------------------------------------------------------
 
-## Reproducible case study (spectra -> pre-processing -> PLS baseline -> soilVAE)
+## Reproducible case study (spectra -\> pre-processing -\> PLS baseline -\> soilVAE)
 
-This follows the workflow style commonly used in soil spectral inference tutorials (e.g., Wadoux et al., 2021) [@wadoux2021], with a direct comparison between a **PLS baseline** and **soilVAE**.
+This follows the workflow style commonly used in soil spectral inference
+tutorials (e.g., Wadoux et al., 2021) (Wadoux et al. 2021), with a
+direct comparison between a **PLS baseline** and **soilVAE**.
 
 ### Packages
 
-```{r, message=FALSE}
+``` r
 set.seed(19101991)
 
 pkgs <- c("prospectr", "pls", "reticulate")
@@ -150,33 +143,49 @@ if (has_py) {
   has_tf <- reticulate::py_module_available("tensorflow") &&
     reticulate::py_module_available("keras")
 }
-
 ```
 
 ### Data
 
-This example assumes you ship `datsoilspc` inside the package (`data/datsoilspc.rda`).
+This example assumes you ship `datsoilspc` inside the package
+(`data/datsoilspc.rda`).
 
-This dataset is provided and described at Geeves et al. (1995)
+This dataset is provided and described at Geeves et al. (1995)
 
-*Geeves, G. W. (Guy W.) & New South Wales. Department of Conservation and Land Management & CSIRO. Division of Soils. (1995). The physical, chemical and morphological properties of soils in the wheat-belt of southern N.S.W. and northern Victoria / G.W. Geeves ... [et al.]. Glen Osmond, S. Aust. : CSIRO Division of Soils*
+*Geeves, G. W. (Guy W.) & New South Wales. Department of Conservation
+and Land Management & CSIRO. Division of Soils. (1995). The physical,
+chemical and morphological properties of soils in the wheat-belt of
+southern N.S.W. and northern Victoria / G.W. Geeves … \[et al.\]. Glen
+Osmond, S. Aust. : CSIRO Division of Soils*
 
-```{r data}
+``` r
 data("datsoilspc", package = "soilVAE")
 str(datsoilspc)
+#> 'data.frame':    391 obs. of  5 variables:
+#>  $ clay       : num  49 7 56 14 53 24 9 18 33 27 ...
+#>  $ silt       : num  10 24 17 19 7 21 9 20 13 19 ...
+#>  $ sand       : num  42 69 27 67 40 55 83 61 54 55 ...
+#>  $ TotalCarbon: num  0.15 0.12 0.17 1.06 0.69 2.76 0.66 1.36 0.19 0.16 ...
+#>  $ spc        : num [1:391, 1:2151] 0.0898 0.1677 0.0778 0.0958 0.0359 ...
+#>   ..- attr(*, "dimnames")=List of 2
+#>   .. ..$ : NULL
+#>   .. ..$ : chr [1:2151] "350" "351" "352" "353" ...
+#>  - attr(*, "na.action")= 'omit' Named int 392
+#>   ..- attr(*, "names")= chr "63"
 ```
 
 Expected structure:
 
--   `datsoilspc$spc`: matrix of reflectance spectra (rows = samples; cols = wavelengths)
--   `datsoilspc$TotalCarbon`: numeric target (example property)
+- `datsoilspc$spc`: matrix of reflectance spectra (rows = samples; cols
+  = wavelengths)
+- `datsoilspc$TotalCarbon`: numeric target (example property)
 
 ## Utility: evaluation metrics (base R)
 
-We replicate typical “quantitative” metrics used in soil spectroscopy:\
+We replicate typical “quantitative” metrics used in soil spectroscopy:  
 RMSE, MAE, R², bias (ME), RPIQ, and RPD.
 
-```{r}
+``` r
 eval_quant <- function(y, yhat) {
   y <- as.numeric(y)
   yhat <- as.numeric(yhat)
@@ -228,12 +237,11 @@ as_df_metrics <- function(x) {
     stringsAsFactors = FALSE
   )
 }
-
 ```
 
 # Plot reflectance spectra
 
-```{r}
+``` r
 matplot(
   x = as.numeric(colnames(datsoilspc$spc)),
   y = t(as.matrix(datsoilspc$spc)),
@@ -246,9 +254,11 @@ matplot(
 )
 ```
 
+![](reference/figures/unnamed-chunk-3-1.png)
+
 # Convert reflectance to absorbance
 
-```{r}
+``` r
 datsoilspc$spcA <- log(1 / as.matrix(datsoilspc$spc))
 
 matplot(
@@ -263,9 +273,11 @@ matplot(
 )
 ```
 
+![](reference/figures/unnamed-chunk-4-1.png)
+
 # Preprocessing: resample (5 nm) + SNV + moving average
 
-```{r}
+``` r
 oldWavs <- as.numeric(colnames(datsoilspc$spcA))
 newWavs <- seq(min(oldWavs), max(oldWavs), by = 5)
 
@@ -290,12 +302,13 @@ matplot(
   lty = 1,
   col = rgb(0.5, 0.5, 0.5, alpha = 0.3)
 )
-
 ```
+
+![](reference/figures/unnamed-chunk-5-1.png)
 
 # Split calibration vs validation
 
-```{r}
+``` r
 set.seed(19101991)
 
 calId <- sample(seq_len(nrow(datsoilspc)), size = round(0.75 * nrow(datsoilspc)))
@@ -305,15 +318,19 @@ datV <- datsoilspc[-calId, ]  # <-- TEST
 par(mfrow = c(1, 2))
 hist(datC$TotalCarbon, main = "Calibration (datC)", xlab = "Total carbon")
 hist(datV$TotalCarbon, main = "TEST (datV)", xlab = "Total carbon")
-par(mfrow = c(1, 1))
+```
 
+![](reference/figures/unnamed-chunk-6-1.png)
+
+``` r
+par(mfrow = c(1, 1))
 ```
 
 # Baseline model: PLS
 
 We fit PLS on calibration and evaluate on validation.
 
-```{r}
+``` r
 maxc <- 30
 
 soilCPlsModel <- pls::plsr(
@@ -325,12 +342,13 @@ soilCPlsModel <- pls::plsr(
 )
 
 plot(soilCPlsModel, "val", main = "PLS CV performance (datC)", xlab = "Number of components")
-
 ```
+
+![](reference/figures/unnamed-chunk-7-1.png)
 
 # Choose number of components (example uses `nc = 14`).
 
-```{r}
+``` r
 nc <- 14
 
 # Refit on full datC with chosen nc (PLS itself uses all comps up to maxc; prediction uses nc)
@@ -340,31 +358,38 @@ soilCPlsPred_T <- as.numeric(predict(soilCPlsModel, ncomp = nc, newdata = datV$s
 par(mfrow = c(1, 2))
 plot(datC$TotalCarbon, soilCPlsPred_C, xlab="Observed", ylab="Predicted", main="PLS (datC)", pch=16); abline(0,1)
 plot(datV$TotalCarbon, soilCPlsPred_T, xlab="Observed", ylab="Predicted", main="PLS (TEST datV)", pch=16); abline(0,1)
-par(mfrow = c(1, 1))
+```
 
+![](reference/figures/unnamed-chunk-8-1.png)
+
+``` r
+par(mfrow = c(1, 1))
 ```
 
 # Metrics (PLS)
 
 We use the same evaluation function used in many soilspec workflows.
 
-```{r}
+``` r
 pls_cal <- eval_quant(datC$TotalCarbon, soilCPlsPred_C)
 pls_tst <- eval_quant(datV$TotalCarbon, soilCPlsPred_T)
 
 as_df_metrics(pls_cal)
+#>     n ME  MAE RMSE   R2 RPIQ  RPD
+#> 1 293  0 0.37 0.56 0.86 2.04 2.63
 as_df_metrics(pls_tst)
-
+#>    n   ME  MAE RMSE   R2 RPIQ  RPD
+#> 1 98 0.02 0.36 0.52 0.69 2.34 1.81
 ```
 
 # Supervised VAE regression: soilVAE
 
 ### Availability check (TensorFlow/Keras)
 
-This chunk detects if Python + TensorFlow + Keras can be loaded.\
+This chunk detects if Python + TensorFlow + Keras can be loaded.  
 If not available, the VAE section is skipped (vignette still builds).
 
-```{r}
+``` r
 has_py <- reticulate::py_available(initialize = FALSE)
 
 has_tf <- FALSE
@@ -375,15 +400,17 @@ if (has_py) {
 }
 
 has_py
+#> [1] TRUE
 has_tf
-
+#> [1] TRUE
 ```
 
 ### Prepare matrices (same predictors as PLS preprocessing)
 
-Prepare Train/Val internal split within datC (no y transform; scale X only)
+Prepare Train/Val internal split within datC (no y transform; scale X
+only)
 
-```{r}
+``` r
 set.seed(19101991)
 
 nC <- nrow(datC)
@@ -412,20 +439,26 @@ X_te <- scale(X_te_raw, center = X_center, scale = X_scale)
 
 # sanity checks (dims)
 dim(X_tr)
+#> [1] 234 421
 length(y_tr)
+#> [1] 234
 dim(X_va)
+#> [1]  59 421
 length(y_va)
+#> [1] 59
 dim(X_te)
-
+#> [1]  98 421
 ```
 
-Prepare Train/Val internal split within datC (no y transform; scale X only)
+Prepare Train/Val internal split within datC (no y transform; scale X
+only)
 
-We model `TotalCarbon` using the preprocessed spectra matrix `spcAMovav`.
+We model `TotalCarbon` using the preprocessed spectra matrix
+`spcAMovav`.
 
 ### Fit + evaluate soilVAE (skipped if TF/Keras unavailable)
 
-```{r}
+``` r
 
 
 reticulate::py_run_string("
@@ -441,11 +474,9 @@ tf.random.set_seed(19101991)
 ")
 
 Sys.setenv(TF_DETERMINISTIC_OPS = "1")
-
 ```
 
-
-```{r}
+``` r
 
 Sys.setenv(TF_CPP_MIN_LOG_LEVEL = "2")         # reduce logs INFO/WARN
 Sys.setenv(TF_ENABLE_ONEDNN_OPTS = "0")
@@ -521,14 +552,15 @@ if (!has_tf) {
   plot(as.numeric(datV$TotalCarbon), yhat_te, main="soilVAE (TEST datV)", xlab="Observed", ylab="Predicted", pch=16); abline(0,1)
   par(mfrow = c(1, 1))
 }
-
 ```
+
+![](reference/figures/unnamed-chunk-13-1.png)
 
 ## Compare PLS vs soilVAE (TEST = datV)
 
 We present a compact comparison table.
 
-```{r}
+``` r
 if (!has_tf) {
 
   tab <- rbind(
@@ -550,18 +582,24 @@ if (!has_tf) {
 
 row.names(tab) <- NULL
 tab
-
+#>     Model              Split   n    ME  MAE RMSE   R2 RPIQ  RPD
+#> 1     PLS Calibration (datC) 293  0.00 0.37 0.56 0.86 2.04 2.63
+#> 2     PLS        TEST (datV)  98  0.02 0.36 0.52 0.69 2.34 1.81
+#> 3 soilVAE   Train (internal) 234 -0.07 0.31 0.44 0.92 2.54 3.60
+#> 4 soilVAE     Val (internal)  59 -0.10 0.33 0.51 0.76 2.36 2.04
+#> 5 soilVAE        TEST (datV)  98 -0.04 0.33 0.47 0.74 2.56 1.97
 ```
 
-If TensorFlow/Keras was not available, you can still use the PLS section and install a compatible Python stack later.
+If TensorFlow/Keras was not available, you can still use the PLS section
+and install a compatible Python stack later.
 
 ## Notes for reproducibility
 
--   The PLS workflow depends only on R packages `pls` and `prospectr`.
+- The PLS workflow depends only on R packages `pls` and `prospectr`.
 
--   The supervised VAE requires:
+- The supervised VAE requires:
 
-```         
+``` R
 -   Python (\>= 3.9)
 
 -   TensorFlow (\>= 2.13)
@@ -574,3 +612,9 @@ If TensorFlow/Keras was not available, you can still use the PLS section and ins
 *Education without ethics is only rhetoric.*
 
 *Power without reflection is violence*
+
+Wadoux, Alexandre M. J.-C., Brendan Malone, Budiman Minasny, Mario
+Fajardo, and Alex B. McBratney. 2021. *Soil Spectral Inference with R:
+Analyzing Digital Soil Spectra Using the R Programming Environment*.
+Progress in Soil Science. Cham: Springer International Publishing.
+<https://doi.org/10.1007/978-3-030-64896-1>.

@@ -166,19 +166,18 @@ Osmond, S. Aust. : CSIRO Division of Soils*
 ``` r
 data("datsoilspc", package = "soilVAE")
 str(datsoilspc)
+#> 'data.frame':    391 obs. of  5 variables:
+#>  $ clay       : num  49 7 56 14 53 24 9 18 33 27 ...
+#>  $ silt       : num  10 24 17 19 7 21 9 20 13 19 ...
+#>  $ sand       : num  42 69 27 67 40 55 83 61 54 55 ...
+#>  $ TotalCarbon: num  0.15 0.12 0.17 1.06 0.69 2.76 0.66 1.36 0.19 0.16 ...
+#>  $ spc        : num [1:391, 1:2151] 0.0898 0.1677 0.0778 0.0958 0.0359 ...
+#>   ..- attr(*, "dimnames")=List of 2
+#>   .. ..$ : NULL
+#>   .. ..$ : chr [1:2151] "350" "351" "352" "353" ...
+#>  - attr(*, "na.action")= 'omit' Named int 392
+#>   ..- attr(*, "names")= chr "63"
 ```
-
-    ## 'data.frame':    391 obs. of  5 variables:
-    ##  $ clay       : num  49 7 56 14 53 24 9 18 33 27 ...
-    ##  $ silt       : num  10 24 17 19 7 21 9 20 13 19 ...
-    ##  $ sand       : num  42 69 27 67 40 55 83 61 54 55 ...
-    ##  $ TotalCarbon: num  0.15 0.12 0.17 1.06 0.69 2.76 0.66 1.36 0.19 0.16 ...
-    ##  $ spc        : num [1:391, 1:2151] 0.0898 0.1677 0.0778 0.0958 0.0359 ...
-    ##   ..- attr(*, "dimnames")=List of 2
-    ##   .. ..$ : NULL
-    ##   .. ..$ : chr [1:2151] "350" "351" "352" "353" ...
-    ##  - attr(*, "na.action")= 'omit' Named int 392
-    ##   ..- attr(*, "names")= chr "63"
 
 Expected structure:
 
@@ -260,7 +259,7 @@ matplot(
 )
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+![](man/figures/unnamed-chunk-3-1.png)<!-- -->
 
 # Convert reflectance to absorbance
 
@@ -279,7 +278,7 @@ matplot(
 )
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+![](man/figures/unnamed-chunk-4-1.png)<!-- -->
 
 # Preprocessing: resample (5 nm) + SNV + moving average
 
@@ -310,7 +309,7 @@ matplot(
 )
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](man/figures/unnamed-chunk-5-1.png)<!-- -->
 
 # Split calibration vs validation
 
@@ -326,7 +325,7 @@ hist(datC$TotalCarbon, main = "Calibration (datC)", xlab = "Total carbon")
 hist(datV$TotalCarbon, main = "TEST (datV)", xlab = "Total carbon")
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](man/figures/unnamed-chunk-6-1.png)<!-- -->
 
 ``` r
 par(mfrow = c(1, 1))
@@ -350,7 +349,7 @@ soilCPlsModel <- pls::plsr(
 plot(soilCPlsModel, "val", main = "PLS CV performance (datC)", xlab = "Number of components")
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](man/figures/unnamed-chunk-7-1.png)<!-- -->
 
 # Choose number of components (example uses `nc = 14`).
 
@@ -366,7 +365,7 @@ plot(datC$TotalCarbon, soilCPlsPred_C, xlab="Observed", ylab="Predicted", main="
 plot(datV$TotalCarbon, soilCPlsPred_T, xlab="Observed", ylab="Predicted", main="PLS (TEST datV)", pch=16); abline(0,1)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](man/figures/unnamed-chunk-8-1.png)<!-- -->
 
 ``` r
 par(mfrow = c(1, 1))
@@ -381,17 +380,12 @@ pls_cal <- eval_quant(datC$TotalCarbon, soilCPlsPred_C)
 pls_tst <- eval_quant(datV$TotalCarbon, soilCPlsPred_T)
 
 as_df_metrics(pls_cal)
-```
-
-    ##     n ME  MAE RMSE   R2 RPIQ  RPD
-    ## 1 293  0 0.37 0.56 0.86 2.04 2.63
-
-``` r
+#>     n ME  MAE RMSE   R2 RPIQ  RPD
+#> 1 293  0 0.37 0.56 0.86 2.04 2.63
 as_df_metrics(pls_tst)
+#>    n   ME  MAE RMSE   R2 RPIQ  RPD
+#> 1 98 0.02 0.36 0.52 0.69 2.34 1.81
 ```
-
-    ##    n   ME  MAE RMSE   R2 RPIQ  RPD
-    ## 1 98 0.02 0.36 0.52 0.69 2.34 1.81
 
 # Supervised VAE regression: soilVAE
 
@@ -411,15 +405,10 @@ if (has_py) {
 }
 
 has_py
-```
-
-    ## [1] FALSE
-
-``` r
+#> [1] TRUE
 has_tf
+#> [1] TRUE
 ```
-
-    ## [1] FALSE
 
 ### Prepare matrices (same predictors as PLS preprocessing)
 
@@ -455,33 +444,16 @@ X_te <- scale(X_te_raw, center = X_center, scale = X_scale)
 
 # sanity checks (dims)
 dim(X_tr)
-```
-
-    ## [1] 234 421
-
-``` r
+#> [1] 234 421
 length(y_tr)
-```
-
-    ## [1] 234
-
-``` r
+#> [1] 234
 dim(X_va)
-```
-
-    ## [1]  59 421
-
-``` r
+#> [1]  59 421
 length(y_va)
-```
-
-    ## [1] 59
-
-``` r
+#> [1] 59
 dim(X_te)
+#> [1]  98 421
 ```
-
-    ## [1]  98 421
 
 Prepare Train/Val internal split within datC (no y transform; scale X
 only)
@@ -492,6 +464,8 @@ We model `TotalCarbon` using the preprocessed spectra matrix
 ### Fit + evaluate soilVAE (skipped if TF/Keras unavailable)
 
 ``` r
+
+
 reticulate::py_run_string("
 import os
 import random
@@ -508,13 +482,14 @@ Sys.setenv(TF_DETERMINISTIC_OPS = "1")
 ```
 
 ``` r
+
+Sys.setenv(TF_CPP_MIN_LOG_LEVEL = "2")         # reduce logs INFO/WARN
+Sys.setenv(TF_ENABLE_ONEDNN_OPTS = "0")
+
 if (!has_tf) {
   message("TensorFlow/Keras not available; skipping soilVAE section.")
 } else {
   
-  Sys.setenv(TF_CPP_MIN_LOG_LEVEL = "2")         # reduce logs INFO/WARN
-  Sys.setenv(TF_ENABLE_ONEDNN_OPTS = "0")    
-
   # Optional: force a specific python/venv/conda, if needed.
   # soilVAE::vae_configure(conda = "soilvae-tf")
 
@@ -584,7 +559,7 @@ if (!has_tf) {
 }
 ```
 
-    ## TensorFlow/Keras not available; skipping soilVAE section.
+![](man/figures/unnamed-chunk-13-1.png)<!-- -->
 
 ## Compare PLS vs soilVAE (TEST = datV)
 
@@ -612,11 +587,13 @@ if (!has_tf) {
 
 row.names(tab) <- NULL
 tab
+#>     Model              Split   n    ME  MAE RMSE   R2 RPIQ  RPD
+#> 1     PLS Calibration (datC) 293  0.00 0.37 0.56 0.86 2.04 2.63
+#> 2     PLS        TEST (datV)  98  0.02 0.36 0.52 0.69 2.34 1.81
+#> 3 soilVAE   Train (internal) 234 -0.07 0.31 0.44 0.92 2.54 3.60
+#> 4 soilVAE     Val (internal)  59 -0.10 0.33 0.51 0.76 2.36 2.04
+#> 5 soilVAE        TEST (datV)  98 -0.04 0.33 0.47 0.74 2.56 1.97
 ```
-
-    ##   Model              Split   n   ME  MAE RMSE   R2 RPIQ  RPD
-    ## 1   PLS Calibration (datC) 293 0.00 0.37 0.56 0.86 2.04 2.63
-    ## 2   PLS        TEST (datV)  98 0.02 0.36 0.52 0.69 2.34 1.81
 
 If TensorFlow/Keras was not available, you can still use the PLS section
 and install a compatible Python stack later.
