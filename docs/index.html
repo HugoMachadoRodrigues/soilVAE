@@ -13,6 +13,11 @@
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="soilVAE">
 <meta name="description" content="Supervised VAE regression (Keras/TensorFlow via reticulate) for soil spectroscopy and high-dimensional predictors.">
 <meta property="og:description" content="Supervised VAE regression (Keras/TensorFlow via reticulate) for soil spectroscopy and high-dimensional predictors.">
+<meta property="og:image" content="https://hugomachadorodrigues.github.io/soilVAE/reference/figures/soilVAE-og.png">
+<meta property="og:image:alt" content="soilVAE logo">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:creator" content="@Hugo_MRodrigues">
+<meta name="twitter:site" content="@Hugo_MRodrigues">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -50,7 +55,7 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="soilvae-">soilVAE <img src="reference/figures/Badge_soilVAE_2.png" alt="soilVAE badge" align="right" width="287"><a class="anchor" aria-label="anchor" href="#soilvae-"></a>
 </h1></div>
-<p><a href="https://CRAN.R-project.org/package=soilVAE" class="external-link"><img src="https://www.r-pkg.org/badges/version/soilVAE" alt="CRAN status"></a> <a href="https://github.com/HugoMachadoRodrigues/soilVAE/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/HugoMachadoRodrigues/soilVAE/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a> <a href="https://doi.org/10.5281/zenodo.XXXXXXX" class="external-link"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg" alt="DOI"></a> <img src="https://img.shields.io/badge/Python-%3E%3D3.9-blue" alt="Python"><img src="https://img.shields.io/badge/TensorFlow-%3E%3D2.13-orange" alt="TensorFlow"></p>
+<p><a href="https://CRAN.R-project.org/package=soilVAE" class="external-link"><img src="https://www.r-pkg.org/badges/version/soilVAE" alt="CRAN status"></a> <a href="https://github.com/HugoMachadoRodrigues/soilVAE/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/HugoMachadoRodrigues/soilVAE/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a> <a href="https://doi.org/10.5281/zenodo.18715456" class="external-link"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.18715456.svg" alt="DOI"></a> <img src="https://img.shields.io/badge/Python-%3E%3D3.9-blue" alt="Python"><img src="https://img.shields.io/badge/TensorFlow-%3E%3D2.13-orange" alt="TensorFlow"></p>
 <!-- badges: end -->
 <p>Supervised <strong>Variational Autoencoder (VAE)</strong> regression for high‑dimensional predictors (e.g., VIS–NIR–SWIR soil spectroscopy), implemented in <strong>Python TensorFlow/Keras</strong> and exposed in R via <strong>reticulate</strong>.</p>
 <p>The README is also the <strong>main reproducible case study</strong>, mirroring the vignette (<code>vignettes/soilVAE-workflow.Rmd</code>) so a reader can understand the <em>why</em>, <em>how</em>, and <em>performance</em> without opening additional files.</p>
@@ -280,7 +285,11 @@ RMSE, MAE, R², bias (ME), RPIQ, and RPD.</p>
 <span>  lty <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/rgb.html" class="external-link">rgb</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, alpha <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/unnamed-chunk-3-1.png"><!-- --></p>
+<div class="figure">
+<img src="reference/figures/readme-spectrum_plot-1.png" alt="Raw reflectance spectra (datsoilspc$spc)"><p class="caption">
+Raw reflectance spectra (datsoilspc$spc)
+</p>
+</div>
 </div>
 <div class="section level1">
 <h1 id="convert-reflectance-to-absorbance">Convert reflectance to absorbance<a class="anchor" aria-label="anchor" href="#convert-reflectance-to-absorbance"></a>
@@ -298,7 +307,11 @@ RMSE, MAE, R², bias (ME), RPIQ, and RPD.</p>
 <span>  lty <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/rgb.html" class="external-link">rgb</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, alpha <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/unnamed-chunk-4-1.png"><!-- --></p>
+<div class="figure">
+<img src="reference/figures/readme-absorbance_plot-1.png" alt="Absorbance spectra (datsoilspc$spcA)"><p class="caption">
+Absorbance spectra (datsoilspc$spcA)
+</p>
+</div>
 </div>
 <div class="section level1">
 <h1 id="preprocessing-resample-5-nm--snv--moving-average">Preprocessing: resample (5 nm) + SNV + moving average<a class="anchor" aria-label="anchor" href="#preprocessing-resample-5-nm--snv--moving-average"></a>
@@ -328,7 +341,11 @@ RMSE, MAE, R², bias (ME), RPIQ, and RPD.</p>
 <span>  lty <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/rgb.html" class="external-link">rgb</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, alpha <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/unnamed-chunk-5-1.png"><!-- --></p>
+<div class="figure">
+<img src="reference/figures/readme-preprocess_plot-1.png" alt="Preprocessed spectra (datsoilspc$spcAMovav)"><p class="caption">
+Preprocessed spectra (datsoilspc$spcAMovav)
+</p>
+</div>
 </div>
 <div class="section level1">
 <h1 id="split-calibration-vs-validation">Split calibration vs validation<a class="anchor" aria-label="anchor" href="#split-calibration-vs-validation"></a>
@@ -343,7 +360,11 @@ RMSE, MAE, R², bias (ME), RPIQ, and RPD.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">datC</span><span class="op">$</span><span class="va">TotalCarbon</span>, main <span class="op">=</span> <span class="st">"Calibration (datC)"</span>, xlab <span class="op">=</span> <span class="st">"Total carbon"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">datV</span><span class="op">$</span><span class="va">TotalCarbon</span>, main <span class="op">=</span> <span class="st">"TEST (datV)"</span>, xlab <span class="op">=</span> <span class="st">"Total carbon"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/unnamed-chunk-6-1.png"><!-- --></p>
+<div class="figure">
+<img src="reference/figures/readme-Splits-1.png" alt="Calibration vs TEST splits (datC vs datV)"><p class="caption">
+Calibration vs TEST splits (datC vs datV)
+</p>
+</div>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -363,7 +384,11 @@ RMSE, MAE, R², bias (ME), RPIQ, and RPD.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">soilCPlsModel</span>, <span class="st">"val"</span>, main <span class="op">=</span> <span class="st">"PLS CV performance (datC)"</span>, xlab <span class="op">=</span> <span class="st">"Number of components"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/unnamed-chunk-7-1.png"><!-- --></p>
+<div class="figure">
+<img src="reference/figures/readme-pls_cv-1.png" alt="PLS CV performance (datC)"><p class="caption">
+PLS CV performance (datC)
+</p>
+</div>
 </div>
 <div class="section level1">
 <h1 id="choose-number-of-components-example-uses-nc--14">Choose number of components (example uses <code>nc = 14</code>).<a class="anchor" aria-label="anchor" href="#choose-number-of-components-example-uses-nc--14"></a>
@@ -378,7 +403,11 @@ RMSE, MAE, R², bias (ME), RPIQ, and RPD.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">datC</span><span class="op">$</span><span class="va">TotalCarbon</span>, <span class="va">soilCPlsPred_C</span>, xlab<span class="op">=</span><span class="st">"Observed"</span>, ylab<span class="op">=</span><span class="st">"Predicted"</span>, main<span class="op">=</span><span class="st">"PLS (datC)"</span>, pch<span class="op">=</span><span class="fl">16</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">datV</span><span class="op">$</span><span class="va">TotalCarbon</span>, <span class="va">soilCPlsPred_T</span>, xlab<span class="op">=</span><span class="st">"Observed"</span>, ylab<span class="op">=</span><span class="st">"Predicted"</span>, main<span class="op">=</span><span class="st">"PLS (TEST datV)"</span>, pch<span class="op">=</span><span class="fl">16</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/unnamed-chunk-8-1.png"><!-- --></p>
+<div class="figure">
+<img src="reference/figures/readme-pls_pred-1.png" alt="PLS predictions (datC + datV)"><p class="caption">
+PLS predictions (datC + datV)
+</p>
+</div>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -469,9 +498,7 @@ If not available, the VAE section is skipped (vignette still builds).</p>
 <h3 id="fit--evaluate-soilvae-skipped-if-tfkeras-unavailable">Fit + evaluate soilVAE (skipped if TF/Keras unavailable)<a class="anchor" aria-label="anchor" href="#fit--evaluate-soilvae-skipped-if-tfkeras-unavailable"></a>
 </h3>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span></span>
-<span><span class="fu">reticulate</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/reticulate/reference/py_run.html" class="external-link">py_run_string</a></span><span class="op">(</span><span class="st">"</span></span>
+<code class="sourceCode R"><span><span class="fu">reticulate</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/reticulate/reference/py_run.html" class="external-link">py_run_string</a></span><span class="op">(</span><span class="st">"</span></span>
 <span><span class="st">import os</span></span>
 <span><span class="st">import random</span></span>
 <span><span class="st">import numpy as np</span></span>
@@ -487,11 +514,13 @@ If not available, the VAE section is skipped (vignette still builds).</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.setenv</a></span><span class="op">(</span>TF_CPP_MIN_LOG_LEVEL <span class="op">=</span> <span class="st">"2"</span><span class="op">)</span>         <span class="co"># reduce logs INFO/WARN</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.setenv</a></span><span class="op">(</span>TF_ENABLE_ONEDNN_OPTS <span class="op">=</span> <span class="st">"0"</span><span class="op">)</span></span>
+<span><span class="co"># Sys.setenv(TF_ENABLE_ONEDNN_OPTS = "0")</span></span>
 <span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="va">has_tf</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"TensorFlow/Keras not available; skipping soilVAE section."</span><span class="op">)</span></span>
 <span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>  </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.setenv</a></span><span class="op">(</span>TF_ENABLE_ONEDNN_OPTS<span class="op">=</span><span class="st">"0"</span><span class="op">)</span></span>
 <span>  </span>
 <span>  <span class="co"># Optional: force a specific python/venv/conda, if needed.</span></span>
 <span>  <span class="co"># soilVAE::vae_configure(conda = "soilvae-tf")</span></span>
@@ -560,7 +589,11 @@ If not available, the VAE section is skipped (vignette still builds).</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">datV</span><span class="op">$</span><span class="va">TotalCarbon</span><span class="op">)</span>, <span class="va">yhat_te</span>, main<span class="op">=</span><span class="st">"soilVAE (TEST datV)"</span>, xlab<span class="op">=</span><span class="st">"Observed"</span>, ylab<span class="op">=</span><span class="st">"Predicted"</span>, pch<span class="op">=</span><span class="fl">16</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p><img src="reference/figures/unnamed-chunk-13-1.png"><!-- --></p>
+<div class="figure">
+<img src="reference/figures/readme-plotting_splits_VAE-1.png" alt="Train/Val splits for soilVAE"><p class="caption">
+Train/Val splits for soilVAE
+</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="compare-pls-vs-soilvae-test--datv">Compare PLS vs soilVAE (TEST = datV)<a class="anchor" aria-label="anchor" href="#compare-pls-vs-soilvae-test--datv"></a>

@@ -3,7 +3,7 @@
 [![CRAN
 status](https://www.r-pkg.org/badges/version/soilVAE)](https://CRAN.R-project.org/package=soilVAE)
 [![R-CMD-check](https://github.com/HugoMachadoRodrigues/soilVAE/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/HugoMachadoRodrigues/soilVAE/actions/workflows/R-CMD-check.yaml)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18715456.svg)](https://doi.org/10.5281/zenodo.18715456)
 ![Python](https://img.shields.io/badge/Python-%3E%3D3.9-blue)![TensorFlow](https://img.shields.io/badge/TensorFlow-%3E%3D2.13-orange)
 
 Supervised **Variational Autoencoder (VAE)** regression for
@@ -254,7 +254,10 @@ matplot(
 )
 ```
 
-![](reference/figures/unnamed-chunk-3-1.png)
+![Raw reflectance spectra
+(datsoilspc\$spc)](reference/figures/readme-spectrum_plot-1.png)
+
+Raw reflectance spectra (datsoilspc\$spc)
 
 # Convert reflectance to absorbance
 
@@ -273,7 +276,10 @@ matplot(
 )
 ```
 
-![](reference/figures/unnamed-chunk-4-1.png)
+![Absorbance spectra
+(datsoilspc\$spcA)](reference/figures/readme-absorbance_plot-1.png)
+
+Absorbance spectra (datsoilspc\$spcA)
 
 # Preprocessing: resample (5 nm) + SNV + moving average
 
@@ -304,7 +310,10 @@ matplot(
 )
 ```
 
-![](reference/figures/unnamed-chunk-5-1.png)
+![Preprocessed spectra
+(datsoilspc\$spcAMovav)](reference/figures/readme-preprocess_plot-1.png)
+
+Preprocessed spectra (datsoilspc\$spcAMovav)
 
 # Split calibration vs validation
 
@@ -320,7 +329,10 @@ hist(datC$TotalCarbon, main = "Calibration (datC)", xlab = "Total carbon")
 hist(datV$TotalCarbon, main = "TEST (datV)", xlab = "Total carbon")
 ```
 
-![](reference/figures/unnamed-chunk-6-1.png)
+![Calibration vs TEST splits (datC vs
+datV)](reference/figures/readme-Splits-1.png)
+
+Calibration vs TEST splits (datC vs datV)
 
 ``` r
 par(mfrow = c(1, 1))
@@ -344,7 +356,9 @@ soilCPlsModel <- pls::plsr(
 plot(soilCPlsModel, "val", main = "PLS CV performance (datC)", xlab = "Number of components")
 ```
 
-![](reference/figures/unnamed-chunk-7-1.png)
+![PLS CV performance (datC)](reference/figures/readme-pls_cv-1.png)
+
+PLS CV performance (datC)
 
 # Choose number of components (example uses `nc = 14`).
 
@@ -360,7 +374,10 @@ plot(datC$TotalCarbon, soilCPlsPred_C, xlab="Observed", ylab="Predicted", main="
 plot(datV$TotalCarbon, soilCPlsPred_T, xlab="Observed", ylab="Predicted", main="PLS (TEST datV)", pch=16); abline(0,1)
 ```
 
-![](reference/figures/unnamed-chunk-8-1.png)
+![PLS predictions (datC +
+datV)](reference/figures/readme-pls_pred-1.png)
+
+PLS predictions (datC + datV)
 
 ``` r
 par(mfrow = c(1, 1))
@@ -459,8 +476,6 @@ We model `TotalCarbon` using the preprocessed spectra matrix
 ### Fit + evaluate soilVAE (skipped if TF/Keras unavailable)
 
 ``` r
-
-
 reticulate::py_run_string("
 import os
 import random
@@ -479,11 +494,13 @@ Sys.setenv(TF_DETERMINISTIC_OPS = "1")
 ``` r
 
 Sys.setenv(TF_CPP_MIN_LOG_LEVEL = "2")         # reduce logs INFO/WARN
-Sys.setenv(TF_ENABLE_ONEDNN_OPTS = "0")
+# Sys.setenv(TF_ENABLE_ONEDNN_OPTS = "0")
 
 if (!has_tf) {
   message("TensorFlow/Keras not available; skipping soilVAE section.")
 } else {
+  
+  Sys.setenv(TF_ENABLE_ONEDNN_OPTS="0")
   
   # Optional: force a specific python/venv/conda, if needed.
   # soilVAE::vae_configure(conda = "soilvae-tf")
@@ -554,7 +571,10 @@ if (!has_tf) {
 }
 ```
 
-![](reference/figures/unnamed-chunk-13-1.png)
+![Train/Val splits for
+soilVAE](reference/figures/readme-plotting_splits_VAE-1.png)
+
+Train/Val splits for soilVAE
 
 ## Compare PLS vs soilVAE (TEST = datV)
 

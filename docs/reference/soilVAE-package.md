@@ -8,9 +8,9 @@ regression model and tuning utilities for high-dimensional predictors
 
 Useful links:
 
-- <https://hugomachadorodrigues.github.io/soilVAE>
+- <https://hugomachadorodrigues.github.io/soilVAE/>
 
-- <https://github.com/HugoMachadoRodrigues/soilVAE>
+- <https://github.com/HugoMachadoRodrigues/soilVAE/>
 
 - Report bugs at
   <https://github.com/HugoMachadoRodrigues/soilVAE/issues>

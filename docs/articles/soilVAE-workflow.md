@@ -122,7 +122,10 @@ matplot(
 )
 ```
 
-![](../../../../reference/figures/unnamed-chunk-5-1.png)
+![Preprocessed spectra (SNV +
+movav)](figures/workflow-spectra-plot-1.png)
+
+Preprocessed spectra (SNV + movav)
 
 ## Split: calibration (datC) vs test (datV)
 
@@ -149,7 +152,9 @@ pls_fit <- pls::plsr(
 plot(pls_fit, "val", main = "PLS CV performance", xlab = "Number of components")
 ```
 
-![](../../../../reference/figures/unnamed-chunk-7-1.png)
+![PLS CV performance](figures/workflow-pls-1.png)
+
+PLS CV performance
 
 ``` r
 nc <- 14

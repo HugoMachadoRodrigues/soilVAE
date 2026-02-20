@@ -2,12 +2,14 @@ url: https://hugomachadorodrigues.github.io/soilVAE/
 
 template:
   bootstrap: 5
-    opengraph:
+  opengraph:
     image:
       src: man/figures/soilVAE-og.png
       alt: "soilVAE logo"
     twitter:
       card: summary_large_image
+      creator: "@Hugo_MRodrigues"
+      site: "@Hugo_MRodrigues"
 
 home:
   title: soilVAE
