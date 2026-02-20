@@ -1,24 +1,17 @@
+## Resubmission
+
+This is a resubmission.
+
 ## Test environments
 
-- R version 4.3.2 (Windows 11)
-- R version 4.3.2 (Ubuntu 22.04, GitHub Actions)
-- R-devel (GitHub Actions)
-
-The words flagged as possibly misspelled in DESCRIPTION (e.g., variational, autoencoder, VAE, embeddings) are standard technical
-terms in machine learning and statistics.
+- R-devel (Debian GNU/Linux, CRAN incoming pretests)
+- R-devel (Windows Server 2022, CRAN incoming pretests)
+- GitHub Actions (ubuntu-latest)
 
 ## R CMD check results
 
-There were no ERRORs or WARNINGs.
+0 errors | 0 warnings | 1 note
 
-There was 1 NOTE:
-
-* Package has a VignetteBuilder field but no prebuilt vignette index.
-
-This is a new submission. The package includes vignettes built with
-knitr and rmarkdown, which are built successfully during check.
-The NOTE is expected for new submissions.
-
-## Downstream dependencies
-
-None.
+NOTE:
+- The words flagged as possibly misspelled in DESCRIPTION (e.g., variational, autoencoder(s), VAE, VIS/NIR/SWIR, Keras, reticulate) are standard technical terms and abbreviations in machine learning and soil spectroscopy.
+- The NOTE about the VignetteBuilder field without a prebuilt vignette index is expected for a new submission; vignettes are built successfully during checks.

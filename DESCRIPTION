@@ -1,12 +1,12 @@
 Package: soilVAE
 Type: Package
 Title: Supervised Variational Autoencoder Regression via 'reticulate'
-Version: 0.1.1
+Version: 0.1.2
 Authors@R:
     person("Hugo", "Rodrigues", email = "rodrigues.machado.hugo@gmail.com", role = c("aut", "cre"))
-Description: Description: Provides supervised variational autoencoders (VAE), i.e. deep learning models for regression with
-    high-dimensional predictors, such as visible, near-infrared, and shortwave infrared (VIS–NIR–SWIR) soil spectroscopy
-    data. Models are implemented in Python using TensorFlow and Keras, and made available in R via the reticulate.
+Description: Provides supervised variational autoencoders (VAE), i.e., deep learning models for regression with
+    high-dimensional predictors such as visible, near-infrared, and shortwave infrared soil spectroscopy data.
+    Models are implemented in Python using TensorFlow and Keras and made available in R via the reticulate package.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
