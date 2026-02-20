@@ -2,13 +2,15 @@ citHeader("To cite soilVAE in publications, please use:")
 
 bibentry(
   bibtype = "Manual",
-  title = "soilVAE: Supervised Variational Autoencoder regression for high-dimensional predictors",
-  author = c(
-    person("Hugo", "Rodrigues",
-           email = "rodrigues.machado.hugo@gmail.com",
-           role = c("aut", "cre"))
+  title = "soilVAE: Supervised Variational Autoencoder Regression for Soil Spectroscopy",
+  author = person(
+    given = "Hugo",
+    family = "Rodrigues",
+    email = "rodrigues.machado.hugo@gmail.com",
+    role = c("aut", "cre")
   ),
   year = "2026",
   note = "R package version 0.1.2",
-  url = "https://hugomachadorodrigues.github.io/soilVAE/"
+  url = "https://CRAN.R-project.org/package=soilVAE",
+  doi = "10.5281/zenodo.18715456"
 )

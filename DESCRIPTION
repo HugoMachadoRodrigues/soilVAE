@@ -1,6 +1,6 @@
 Package: soilVAE
 Type: Package
-Title: Supervised Variational Autoencoder Regression via 'reticulate'
+Title: Supervised Variational Autoencoder Regression via Reticulate
 Version: 0.1.2
 Authors@R:
     person("Hugo", "Rodrigues", email = "rodrigues.machado.hugo@gmail.com", role = c("aut", "cre"))
