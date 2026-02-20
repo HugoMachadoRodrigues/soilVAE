@@ -9,6 +9,6 @@ bibentry(
            role = c("aut", "cre"))
   ),
   year = "2026",
-  note = "R package version 0.1.0",
+  note = "R package version 0.1.2",
   url = "https://hugomachadorodrigues.github.io/soilVAE/"
 )
