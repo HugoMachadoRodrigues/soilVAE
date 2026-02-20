@@ -12,8 +12,8 @@ and tuning utilities for high-dimensional predictors (e.g., soil spectroscopy).
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://hugomachadorodrigues.github.io/soilVAE}
-  \item \url{https://github.com/HugoMachadoRodrigues/soilVAE}
+  \item \url{https://hugomachadorodrigues.github.io/soilVAE/}
+  \item \url{https://github.com/HugoMachadoRodrigues/soilVAE/}
   \item Report bugs at \url{https://github.com/HugoMachadoRodrigues/soilVAE/issues}
 }
 
