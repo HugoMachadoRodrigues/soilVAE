@@ -4,10 +4,9 @@ Title: Supervised Variational Autoencoder Regression via 'reticulate'
 Version: 0.1.0
 Authors@R:
     person("Hugo", "Rodrigues", email = "rodrigues.machado.hugo@gmail.com", role = c("aut", "cre"))
-Description: Tools to build a supervised variational autoencoder (VAE) for regression
-    using Python 'TensorFlow'/'Keras' through 'reticulate'. Includes helpers to
-    configure the Python environment, build and fit a VAE regression model, extract
-    latent embeddings, and tune hyperparameters on a train/validation split.
+Description: Description: Provides supervised variational autoencoders (VAE), i.e. deep learning models for regression with
+high-dimensional predictors, such as visible, near-infrared, and shortwave infrared (VIS–NIR–SWIR) soil spectroscopy
+data. Models are implemented in Python using TensorFlow and Keras, and made available in R via the reticulate.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
