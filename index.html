@@ -134,7 +134,7 @@
 <span><span class="fu"><a href="https://rstudio.github.io/reticulate/reference/py_install.html" class="external-link">py_install</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tensorflow&gt;=2.13"</span>, <span class="st">"keras&gt;=3"</span><span class="op">)</span>, pip <span class="op">=</span> <span class="cn">TRUE</span>, envname <span class="op">=</span> <span class="st">"soilvae-tf"</span><span class="op">)</span></span></code></pre></div>
 <p>Now, in the same R session:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://hugomachadorodrigues.github.io/soilVAE">soilVAE</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://hugomachadorodrigues.github.io/soilVAE/">soilVAE</a></span><span class="op">)</span></span>
 <span><span class="fu">soilVAE</span><span class="fu">::</span><span class="fu"><a href="reference/vae_configure.html">vae_configure</a></span><span class="op">(</span>conda <span class="op">=</span> <span class="st">"soilvae-tf"</span><span class="op">)</span></span>
 <span><span class="fu">reticulate</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/reticulate/reference/py_config.html" class="external-link">py_config</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -142,7 +142,7 @@
 <h3 id="option-b-point-to-an-existing-python-executable">Option B: point to an existing Python executable<a class="anchor" aria-label="anchor" href="#option-b-point-to-an-existing-python-executable"></a>
 </h3>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://hugomachadorodrigues.github.io/soilVAE">soilVAE</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://hugomachadorodrigues.github.io/soilVAE/">soilVAE</a></span><span class="op">)</span></span>
 <span><span class="fu">soilVAE</span><span class="fu">::</span><span class="fu"><a href="reference/vae_configure.html">vae_configure</a></span><span class="op">(</span>python <span class="op">=</span> <span class="st">"C:/path/to/python.exe"</span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
@@ -167,7 +167,7 @@
 <span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"soilVAE"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="kw"><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop</a></span><span class="op">(</span><span class="st">"soilVAE is not installed. Install it with remotes::install_github('HugoMachadoRodrigues/soilVAE')."</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://hugomachadorodrigues.github.io/soilVAE">soilVAE</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://hugomachadorodrigues.github.io/soilVAE/">soilVAE</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Defensive: detect Python + TF/Keras early, so the README can render everywhere.</span></span>
 <span><span class="va">has_py</span> <span class="op">&lt;-</span> <span class="fu">reticulate</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/reticulate/reference/py_available.html" class="external-link">py_available</a></span><span class="op">(</span>initialize <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
