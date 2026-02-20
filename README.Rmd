@@ -3,20 +3,18 @@ output: github_document
 bibliography: references.bib
 ---
 
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "man/figures/",
+  fig.path = "man/figures/readme-",
+  fig.ext  = "png",
   fig.width = 7,
   fig.height = 4
 )
 
-
 set.seed(19101991)
 ```
-
 
 <!-- badges: start -->
 
@@ -121,7 +119,7 @@ soilVAE::vae_configure(python = "C:/path/to/python.exe")
 
 ------------------------------------------------------------------------
 
-## Reproducible case study (spectra -> pre-processing -> PLS baseline -> soilVAE)
+## Reproducible case study (spectra -\> pre-processing -\> PLS baseline -\> soilVAE)
 
 This follows the workflow style commonly used in soil spectral inference tutorials (e.g., Wadoux et al., 2021) [@wadoux2021], with a direct comparison between a **PLS baseline** and **soilVAE**.
 
@@ -233,7 +231,7 @@ as_df_metrics <- function(x) {
 
 # Plot reflectance spectra
 
-```{r}
+```{r spectrum_plot, fig.alt="Raw reflectance spectra (datsoilspc$spc)", fig.cap="Raw reflectance spectra (datsoilspc$spc)"}
 matplot(
   x = as.numeric(colnames(datsoilspc$spc)),
   y = t(as.matrix(datsoilspc$spc)),
@@ -248,7 +246,7 @@ matplot(
 
 # Convert reflectance to absorbance
 
-```{r}
+```{r absorbance_plot, fig.alt="Absorbance spectra (datsoilspc$spcA)", fig.cap="Absorbance spectra (datsoilspc$spcA)"}
 datsoilspc$spcA <- log(1 / as.matrix(datsoilspc$spc))
 
 matplot(
@@ -265,7 +263,7 @@ matplot(
 
 # Preprocessing: resample (5 nm) + SNV + moving average
 
-```{r}
+```{r preprocess_plot, fig.alt="Preprocessed spectra (datsoilspc$spcAMovav)", fig.cap="Preprocessed spectra (datsoilspc$spcAMovav)"}
 oldWavs <- as.numeric(colnames(datsoilspc$spcA))
 newWavs <- seq(min(oldWavs), max(oldWavs), by = 5)
 
@@ -295,7 +293,7 @@ matplot(
 
 # Split calibration vs validation
 
-```{r}
+```{r Splits, fig.alt="Calibration vs TEST splits (datC vs datV)", fig.cap="Calibration vs TEST splits (datC vs datV)"}
 set.seed(19101991)
 
 calId <- sample(seq_len(nrow(datsoilspc)), size = round(0.75 * nrow(datsoilspc)))
@@ -313,7 +311,7 @@ par(mfrow = c(1, 1))
 
 We fit PLS on calibration and evaluate on validation.
 
-```{r}
+```{r pls_cv, fig.alt="PLS CV performance (datC)", fig.cap="PLS CV performance (datC)"}
 maxc <- 30
 
 soilCPlsModel <- pls::plsr(
@@ -330,7 +328,7 @@ plot(soilCPlsModel, "val", main = "PLS CV performance (datC)", xlab = "Number of
 
 # Choose number of components (example uses `nc = 14`).
 
-```{r}
+```{r pls_pred, fig.alt="PLS predictions (datC + datV)", fig.cap="PLS predictions (datC + datV)"}
 nc <- 14
 
 # Refit on full datC with chosen nc (PLS itself uses all comps up to maxc; prediction uses nc)
@@ -348,13 +346,12 @@ par(mfrow = c(1, 1))
 
 We use the same evaluation function used in many soilspec workflows.
 
-```{r}
+```{r }
 pls_cal <- eval_quant(datC$TotalCarbon, soilCPlsPred_C)
 pls_tst <- eval_quant(datV$TotalCarbon, soilCPlsPred_T)
 
 as_df_metrics(pls_cal)
 as_df_metrics(pls_tst)
-
 ```
 
 # Supervised VAE regression: soilVAE
@@ -426,8 +423,6 @@ We model `TotalCarbon` using the preprocessed spectra matrix `spcAMovav`.
 ### Fit + evaluate soilVAE (skipped if TF/Keras unavailable)
 
 ```{r}
-
-
 reticulate::py_run_string("
 import os
 import random
@@ -441,18 +436,18 @@ tf.random.set_seed(19101991)
 ")
 
 Sys.setenv(TF_DETERMINISTIC_OPS = "1")
-
 ```
 
-
-```{r}
+```{r plotting_splits_VAE, fig.alt="Train/Val splits for soilVAE", fig.cap="Train/Val splits for soilVAE"}
 
 Sys.setenv(TF_CPP_MIN_LOG_LEVEL = "2")         # reduce logs INFO/WARN
-Sys.setenv(TF_ENABLE_ONEDNN_OPTS = "0")
+# Sys.setenv(TF_ENABLE_ONEDNN_OPTS = "0")
 
 if (!has_tf) {
   message("TensorFlow/Keras not available; skipping soilVAE section.")
 } else {
+  
+  Sys.setenv(TF_ENABLE_ONEDNN_OPTS="0")
   
   # Optional: force a specific python/venv/conda, if needed.
   # soilVAE::vae_configure(conda = "soilvae-tf")
@@ -521,14 +516,13 @@ if (!has_tf) {
   plot(as.numeric(datV$TotalCarbon), yhat_te, main="soilVAE (TEST datV)", xlab="Observed", ylab="Predicted", pch=16); abline(0,1)
   par(mfrow = c(1, 1))
 }
-
 ```
 
 ## Compare PLS vs soilVAE (TEST = datV)
 
 We present a compact comparison table.
 
-```{r}
+```{r }
 if (!has_tf) {
 
   tab <- rbind(

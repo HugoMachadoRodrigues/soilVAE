@@ -259,7 +259,15 @@ matplot(
 )
 ```
 
-![](man/figures/unnamed-chunk-3-1.png)<!-- -->
+<div class="figure">
+
+<img src="man/figures/readme-spectrum_plot-1.png" alt="Raw reflectance spectra (datsoilspc$spc)"  />
+<p class="caption">
+
+Raw reflectance spectra (datsoilspc\$spc)
+</p>
+
+</div>
 
 # Convert reflectance to absorbance
 
@@ -278,7 +286,15 @@ matplot(
 )
 ```
 
-![](man/figures/unnamed-chunk-4-1.png)<!-- -->
+<div class="figure">
+
+<img src="man/figures/readme-absorbance_plot-1.png" alt="Absorbance spectra (datsoilspc$spcA)"  />
+<p class="caption">
+
+Absorbance spectra (datsoilspc\$spcA)
+</p>
+
+</div>
 
 # Preprocessing: resample (5 nm) + SNV + moving average
 
@@ -309,7 +325,15 @@ matplot(
 )
 ```
 
-![](man/figures/unnamed-chunk-5-1.png)<!-- -->
+<div class="figure">
+
+<img src="man/figures/readme-preprocess_plot-1.png" alt="Preprocessed spectra (datsoilspc$spcAMovav)"  />
+<p class="caption">
+
+Preprocessed spectra (datsoilspc\$spcAMovav)
+</p>
+
+</div>
 
 # Split calibration vs validation
 
@@ -325,7 +349,15 @@ hist(datC$TotalCarbon, main = "Calibration (datC)", xlab = "Total carbon")
 hist(datV$TotalCarbon, main = "TEST (datV)", xlab = "Total carbon")
 ```
 
-![](man/figures/unnamed-chunk-6-1.png)<!-- -->
+<div class="figure">
+
+<img src="man/figures/readme-Splits-1.png" alt="Calibration vs TEST splits (datC vs datV)"  />
+<p class="caption">
+
+Calibration vs TEST splits (datC vs datV)
+</p>
+
+</div>
 
 ``` r
 par(mfrow = c(1, 1))
@@ -349,7 +381,15 @@ soilCPlsModel <- pls::plsr(
 plot(soilCPlsModel, "val", main = "PLS CV performance (datC)", xlab = "Number of components")
 ```
 
-![](man/figures/unnamed-chunk-7-1.png)<!-- -->
+<div class="figure">
+
+<img src="man/figures/readme-pls_cv-1.png" alt="PLS CV performance (datC)"  />
+<p class="caption">
+
+PLS CV performance (datC)
+</p>
+
+</div>
 
 # Choose number of components (example uses `nc = 14`).
 
@@ -365,7 +405,15 @@ plot(datC$TotalCarbon, soilCPlsPred_C, xlab="Observed", ylab="Predicted", main="
 plot(datV$TotalCarbon, soilCPlsPred_T, xlab="Observed", ylab="Predicted", main="PLS (TEST datV)", pch=16); abline(0,1)
 ```
 
-![](man/figures/unnamed-chunk-8-1.png)<!-- -->
+<div class="figure">
+
+<img src="man/figures/readme-pls_pred-1.png" alt="PLS predictions (datC + datV)"  />
+<p class="caption">
+
+PLS predictions (datC + datV)
+</p>
+
+</div>
 
 ``` r
 par(mfrow = c(1, 1))
@@ -464,8 +512,6 @@ We model `TotalCarbon` using the preprocessed spectra matrix
 ### Fit + evaluate soilVAE (skipped if TF/Keras unavailable)
 
 ``` r
-
-
 reticulate::py_run_string("
 import os
 import random
@@ -484,11 +530,13 @@ Sys.setenv(TF_DETERMINISTIC_OPS = "1")
 ``` r
 
 Sys.setenv(TF_CPP_MIN_LOG_LEVEL = "2")         # reduce logs INFO/WARN
-Sys.setenv(TF_ENABLE_ONEDNN_OPTS = "0")
+# Sys.setenv(TF_ENABLE_ONEDNN_OPTS = "0")
 
 if (!has_tf) {
   message("TensorFlow/Keras not available; skipping soilVAE section.")
 } else {
+  
+  Sys.setenv(TF_ENABLE_ONEDNN_OPTS="0")
   
   # Optional: force a specific python/venv/conda, if needed.
   # soilVAE::vae_configure(conda = "soilvae-tf")
@@ -559,7 +607,15 @@ if (!has_tf) {
 }
 ```
 
-![](man/figures/unnamed-chunk-13-1.png)<!-- -->
+<div class="figure">
+
+<img src="man/figures/readme-plotting_splits_VAE-1.png" alt="Train/Val splits for soilVAE"  />
+<p class="caption">
+
+Train/Val splits for soilVAE
+</p>
+
+</div>
 
 ## Compare PLS vs soilVAE (TEST = datV)
 

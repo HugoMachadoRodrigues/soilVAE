@@ -12,7 +12,8 @@ bibliography: references.bib
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "man/figures/",
+  fig.path = "figures/workflow-",
+  fig.ext  = "png",
   fig.width = 7,
   fig.height = 4
 )
@@ -118,7 +119,7 @@ spcAMovav <- prospectr::movav(spcASnv, w = 11)
 datsoilspc$spcAMovav <- spcAMovav
 ```
 
-```{r}
+```{r spectra-plot, fig.alt="Preprocessed spectra (SNV + movav)", fig.cap="Preprocessed spectra (SNV + movav)"}
 matplot(
   x = as.numeric(colnames(datsoilspc$spcAMovav)),
   y = t(datsoilspc$spcAMovav),
@@ -141,7 +142,7 @@ datV <- datsoilspc[-calId, ]
 
 ## Baseline: PLS (train on datC, evaluate on datV)
 
-```{r}
+```{r pls, fig.alt="PLS CV performance", fig.cap="PLS CV performance"}
 maxc <- 30
 pls_fit <- pls::plsr(
   TotalCarbon ~ spcAMovav,
