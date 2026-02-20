@@ -3,7 +3,7 @@
 [![CRAN
 status](https://www.r-pkg.org/badges/version/soilVAE)](https://CRAN.R-project.org/package=soilVAE)
 [![R-CMD-check](https://github.com/HugoMachadoRodrigues/soilVAE/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/HugoMachadoRodrigues/soilVAE/actions/workflows/R-CMD-check.yaml)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.187115457.svg)](https://doi.org/10.5281/zenodo.187115457)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18715456.svg)](https://doi.org/10.5281/zenodo.18715456)
 ![Python](https://img.shields.io/badge/Python-%3E%3D3.9-blue)![TensorFlow](https://img.shields.io/badge/TensorFlow-%3E%3D2.13-orange)
 
 Supervised **Variational Autoencoder (VAE)** regression for
