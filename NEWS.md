@@ -1,4 +1,4 @@
-# soilVAE 0.1.0
+# soilVAE 0.1.1
 
 - Initial release.
 - Supervised VAE regression model via Keras/TensorFlow through reticulate.

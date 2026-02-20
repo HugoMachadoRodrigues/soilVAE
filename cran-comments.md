@@ -4,6 +4,9 @@
 - R version 4.3.2 (Ubuntu 22.04, GitHub Actions)
 - R-devel (GitHub Actions)
 
+The words flagged as possibly misspelled in DESCRIPTION (e.g., variational, autoencoder, VAE, embeddings) are standard technical
+terms in machine learning and statistics.
+
 ## R CMD check results
 
 There were no ERRORs or WARNINGs.
