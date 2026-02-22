@@ -1,3 +1,4 @@
 # soilVAE 0.1.3
 
-- Resubmission: clarified CRAN notes with vignetes.
+- Fixed vignette build to include prebuilt vignette index (CRAN requirement)
+- Minor documentation improvements
