@@ -1,6 +1,7 @@
 ---
 title: "soilVAE vignettes"
 output: rmarkdown::html_vignette
+pkgdown: false
 vignette: >
   %\VignetteIndexEntry{Vignettes}
   %\VignetteEngine{knitr::rmarkdown}
