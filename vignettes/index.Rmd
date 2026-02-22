@@ -1,0 +1,12 @@
+---
+title: "soilVAE vignettes"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignettes}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+This page indexes the package vignettes.
+
+- [soilVAE workflow](soilVAE-workflow.html)

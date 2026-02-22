@@ -1,3 +1,3 @@
-# soilVAE 0.1.2
+# soilVAE 0.1.3
 
-- Resubmission: clarified CRAN notes.
+- Resubmission: clarified CRAN notes with vignetes.
